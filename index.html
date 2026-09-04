@@ -1188,7 +1188,15 @@
     }
 
     function downloadPackage() {
-      alert("Комплект карточки товара (Изображения 3:4, Инфографика, Описание TXT) успешно подготовлен к загрузке!");
+      showToast("Комплект карточки (фото 3:4, инфографика и TXT) успешно сгенерирован!");
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-5 right-5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-3 rounded-xl shadow-2xl z-50 text-sm font-medium transition flex items-center gap-2.5 border border-purple-400/30';
+      toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-300 text-base"></i> <span>${message}</span>`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
     }
 
     // Helper Exponential Backoff Fetch
