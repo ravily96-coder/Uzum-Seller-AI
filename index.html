@@ -918,24 +918,164 @@
       if (step === 6) updateModelPreviewImage();
     }
 
-    function runAIAnalysis() {
-      if (!uploadedImageBase64) {
-        uploadedImageBase64 = DEMO_SHIRT_IMAGE;
-        document.getElementById('uploadPreview').src = DEMO_SHIRT_IMAGE;
-        document.getElementById('uploadPreviewContainer').classList.remove('hidden');
-        document.getElementById('uploadPlaceholder').classList.add('hidden');
-      }
+    async function runAIAnalysis() {
 
-      goToStep(2);
-      document.getElementById('analysisImagePreview').src = uploadedImageBase64 || DEMO_SHIRT_IMAGE;
+if (!uploadedImageBase64) {
+    showToast('Сначала загрузите фотографию товара');
+    return;
+}
 
-      document.getElementById('aiProductType').value = "Рубашка мужская классическая";
-      document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
-      document.getElementById('aiColor').value = "Голубой / Светло-синий";
-      document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
-      document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, пуговицы";
-      document.getElementById('aiVisualFeatures').value = "Дышащая ткань, не мнется, подходит под костюм и джинсы";
+const button = document.getElementById('btnRunAnalysis');
+
+let originalHTML = '';
+
+if (button) {
+    originalHTML = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = `
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>AI анализирует товар...</span>
+    `;
+}
+
+try {
+
+    let imageData = uploadedImageBase64;
+    let mimeType = 'image/jpeg';
+
+    /*
+     * Убираем начало data:image/jpeg;base64,...
+     * перед отправкой изображения на сервер.
+     */
+
+    if (imageData.indexOf(',') !== -1) {
+
+        const header =
+            imageData.substring(
+                0,
+                imageData.indexOf(',')
+            );
+
+        const match =
+            header.match(/data:(.*?);base64/);
+
+        if (match && match[1]) {
+            mimeType = match[1];
+        }
+
+        imageData =
+            imageData.substring(
+                imageData.indexOf(',') + 1
+            );
     }
+
+    /*
+     * Отправляем фотографию на наш Node.js сервер.
+     * Сервер уже подключен к Gemini.
+     */
+
+    const response = await fetch(
+        'http://localhost:3000/api/analyze',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                image: imageData,
+                mimeType: mimeType,
+                sellerHint: ''
+            })
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+
+        console.error(
+            'Backend error:',
+            result
+        );
+
+        throw new Error(
+            result.error ||
+            'Ошибка сервера'
+        );
+    }
+
+    console.log(
+        'GEMINI RESULT:',
+        result
+    );
+
+    /*
+     * Показываем фотографию
+     */
+
+    document.getElementById(
+        'analysisImagePreview'
+    ).src = uploadedImageBase64;
+
+    /*
+     * Заполняем поля результатом Gemini
+     */
+
+    document.getElementById(
+        'aiProductType'
+    ).value = result.productType || '';
+
+    document.getElementById(
+        'aiCategory'
+    ).value = result.category || '';
+
+    document.getElementById(
+        'aiColor'
+    ).value = result.color || '';
+
+    document.getElementById(
+        'aiMaterial'
+    ).value = result.material || '';
+
+    document.getElementById(
+        'aiDesignFeatures'
+    ).value = result.designFeatures || '';
+
+    document.getElementById(
+        'aiVisualFeatures'
+    ).value = result.visualFeatures || '';
+
+    /*
+     * Переходим на шаг AI-анализа
+     */
+
+    goToStep(2);
+
+    showToast(
+        'Gemini успешно проанализировал товар!'
+    );
+
+} catch (error) {
+
+    console.error(
+        'AI analysis error:',
+        error
+    );
+
+    showToast(
+        'Ошибка AI: ' + error.message
+    );
+
+} finally {
+
+    if (button) {
+        button.disabled = false;
+        button.innerHTML = originalHTML;
+    }
+}
+}
 
     function triggerStep2To3() {
       generateTextContent();
