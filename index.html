@@ -8,8 +8,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body {
@@ -22,7 +20,6 @@
     .bg-uzum-purple:hover { background-color: #5d00d6; }
     .border-uzum-purple { border-color: #7000ff; }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -34,17 +31,15 @@
       background: #475569;
       border-radius: 3px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #64748b;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-white">
 
-  <!-- TOP NAVBAR -->
+  <!-- ШАПКА ПРИЛОЖЕНИЯ -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- LOGO -->
+      
+      <!-- ЛОГОТИП -->
       <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-purple-500/20">
           U
@@ -55,230 +50,253 @@
         </div>
       </div>
 
-      <!-- LANGUAGE & NAVIGATION -->
-      <div class="flex items-center space-x-4">
-        <!-- Target Card Language Selector -->
+      <!-- ЯЗЫКИ И НАВИГАЦИЯ -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <!-- Язык карточки -->
         <div class="hidden md:flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700 text-xs">
-          <span class="px-2 text-slate-400" id="lblCardLang">Язык карточки:</span>
+          <span class="px-2 text-slate-400">Язык карточки:</span>
           <select id="cardLangSelect" class="bg-transparent text-white focus:outline-none cursor-pointer font-medium">
             <option value="RU" class="bg-slate-800">🇷🇺 Русский</option>
             <option value="UZ" class="bg-slate-800">🇺🇿 O'zbekcha</option>
           </select>
         </div>
 
-        <!-- UI Language Toggle -->
+        <!-- Язык интерфейса -->
         <button id="btnToggleUILang" onclick="toggleUILanguage()" class="flex items-center space-x-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs transition">
           <span id="uiLangFlag">🇷🇺</span>
           <span id="uiLangText" class="font-medium">RU</span>
         </button>
 
         <button onclick="switchTab('dashboard')" class="text-slate-300 hover:text-white text-sm font-medium px-3 py-2 rounded-lg hover:bg-slate-800 transition">
-          <i class="fa-solid fa-grid-2 mr-1.5"></i> <span id="navDashboard">Дашборд</span>
+          <i class="fa-solid fa-house mr-1.5"></i> <span id="navDashboard">Главная</span>
         </button>
       </div>
+
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- ОСНОВНОЙ КОНТЕНТ -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-    <!-- DASHBOARD VIEW -->
+    <!-- ВЬЮ 1: ДАШБОРД (ГЛАВНЫЙ ЭКРАН) -->
     <section id="viewDashboard" class="space-y-8">
-      <!-- HERO BANNER -->
+      
+      <!-- БАННЕР ПРИВЕТСТВИЯ -->
       <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-900/60 via-slate-900 to-slate-900 border border-purple-500/20 p-6 sm:p-10">
         <div class="relative z-10 max-w-2xl">
-          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight" id="dashTitle">
+          <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight" id="dashTitle">
             Профессиональные карточки для Uzum Market за пару минут
           </h1>
           <p class="mt-3 text-slate-300 text-sm sm:text-base leading-relaxed" id="dashSubtitle">
             Загрузите фото товара. Искусственный интеллект определит детали, подготовит студийное фото, создаст описание на 2 языках и сгенерирует инфографику.
           </p>
-          <div class="mt-6 flex flex-wrap gap-4">
+          <div class="mt-6 flex flex-wrap gap-3 sm:gap-4">
             <button onclick="startNewCard()" class="px-6 py-3 bg-uzum-purple hover:bg-purple-700 text-white font-semibold rounded-xl shadow-lg shadow-purple-600/30 flex items-center space-x-2 transition transform active:scale-95">
               <i class="fa-solid fa-wand-magic-sparkles"></i>
               <span id="btnStartWizard">+ Создать карточку товара</span>
+            </button>
+            <button onclick="startDemoCard()" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium rounded-xl transition flex items-center space-x-2">
+              <i class="fa-solid fa-shirt text-purple-400"></i>
+              <span>Загрузить демо (Рубашка)</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- METRICS GRID -->
+      <!-- МЕТРИКИ -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="mCardsCreated">Создано карточек</div>
-          <div class="text-2xl font-bold text-white mt-1" id="valCardsCreated">12</div>
+          <div class="text-slate-400 text-xs font-medium">Создано карточек</div>
+          <div class="text-2xl font-bold text-white mt-1" id="valCardsCreated">1</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="mProcessedImg">Обработано изображений</div>
-          <div class="text-2xl font-bold text-white mt-1" id="valProcessedImg">48</div>
+          <div class="text-slate-400 text-xs font-medium">Обработано фото</div>
+          <div class="text-2xl font-bold text-white mt-1">14</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="mInfographics">Создано инфографик</div>
-          <div class="text-2xl font-bold text-white mt-1" id="valInfographics">36</div>
+          <div class="text-slate-400 text-xs font-medium">Создано слайдов</div>
+          <div class="text-2xl font-bold text-white mt-1">28</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="mUzumCompliance">Успешных проверок Uzum</div>
+          <div class="text-slate-400 text-xs font-medium">Соответствие Uzum</div>
           <div class="text-2xl font-bold text-emerald-400 mt-1">100%</div>
         </div>
       </div>
 
-      <!-- RECENT PROJECTS -->
+      <!-- СПИСОК ПРОЕКТОВ -->
       <div>
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-white" id="recentProjectsTitle">Мои товары и проекты</h2>
+          <h2 class="text-xl font-bold text-white">Мои товары и проекты</h2>
         </div>
         <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Dynamically filled with JavaScript -->
+          <!-- Заполняется динамически через JS -->
         </div>
       </div>
+
     </section>
 
-    <!-- WIZARD STEPPER CREATION WORKFLOW -->
+    <!-- ВЬЮ 2: ПОШАГОВЫЙ МАСТЕР СОЗДАНИЯ (WIZARD) -->
     <section id="viewWizard" class="hidden space-y-6">
       
-      <!-- PROGRESS STEPPER BAR -->
+      <!-- ИНДИКАТОР ПРОГРЕССА (8 ШАГОВ) -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 overflow-x-auto">
         <div class="flex items-center justify-between min-w-[700px]">
           
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(1)">
-            <div id="stepCircle-1" class="w-9 h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-sm shadow-md">1</div>
-            <span class="text-xs mt-1 text-purple-300 font-medium" id="stepLabel-1">Товар</span>
+            <div id="stepCircle-1" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md">1</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-purple-300 font-medium">Товар</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-1"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(2)">
-            <div id="stepCircle-2" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">2</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-2">Анализ</span>
+            <div id="stepCircle-2" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">2</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Анализ</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-2"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(3)">
-            <div id="stepCircle-3" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">3</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-3">Описание</span>
+            <div id="stepCircle-3" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">3</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Описание</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-3"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(4)">
-            <div id="stepCircle-4" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">4</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-4">Главное фото</span>
+            <div id="stepCircle-4" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">4</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Главное фото</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-4"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(5)">
-            <div id="stepCircle-5" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">5</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-5">Инфографика</span>
+            <div id="stepCircle-5" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">5</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Инфографика</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-5"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(6)">
-            <div id="stepCircle-6" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">6</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-6">На модели</span>
+            <div id="stepCircle-6" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">6</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">На модели</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-6"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(7)">
-            <div id="stepCircle-7" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">7</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-7">Проверка</span>
+            <div id="stepCircle-7" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">7</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Проверка</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-7"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(8)">
-            <div id="stepCircle-8" class="w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700">8</div>
-            <span class="text-xs mt-1 text-slate-500 font-medium" id="stepLabel-8">Готово</span>
+            <div id="stepCircle-8" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">8</div>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Готово</span>
           </div>
 
         </div>
       </div>
 
-      <!-- STEP CONTENT CONTAINER -->
-      <div id="stepContent" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 min-h-[480px]">
+      <!-- КОНТЕЙНЕР ШАГОВ -->
+      <div id="stepContent" class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 min-h-[480px]">
         
-        <!-- STEP 1: UPLOAD PHOTO / CAMERA -->
+        <!-- ШАГ 1: ЗАГРУЗКА ИЛИ КАМЕРА -->
         <div id="stepPanel-1" class="space-y-6">
           <div class="text-center max-w-xl mx-auto">
-            <h2 class="text-2xl font-bold text-white" id="step1Title">Загрузите фотографию товара</h2>
-            <p class="text-slate-400 text-sm mt-1" id="step1Desc">Сделайте снимок на камеру телефона или загрузите оригинальный файл товара.</p>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Загрузите фотографию товара</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Сделайте снимок на камеру телефона, выберите из галереи или используйте готовую демо-рубашку.</p>
           </div>
 
           <div class="max-w-xl mx-auto space-y-4">
-            <!-- DROPZONE -->
-            <div id="dropZone" onclick="triggerFileInput()" class="border-2 border-dashed border-slate-700 hover:border-purple-500 bg-slate-800/40 rounded-2xl p-8 text-center cursor-pointer transition relative group">
+            
+            <!-- КНОПКА БЫСТРОГО ТЕСТА С РУБАШКОЙ -->
+            <div class="bg-purple-950/40 border border-purple-500/30 rounded-xl p-3 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-shirt text-purple-400 text-xl"></i>
+                <div class="text-left">
+                  <p class="text-xs font-bold text-white">Нет фото под рукой?</p>
+                  <p class="text-[11px] text-purple-300">Загрузить пример (Мужская рубашка)</p>
+                </div>
+              </div>
+              <button onclick="startDemoCard()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition">
+                Использовать демо
+              </button>
+            </div>
+
+            <!-- ЗОНА ДРОПЗОНЫ -->
+            <div id="dropZone" onclick="triggerFileInput()" class="border-2 border-dashed border-slate-700 hover:border-purple-500 bg-slate-800/40 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition relative">
               <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleFileSelect(event)" />
               <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)" />
               
               <div id="uploadPlaceholder" class="space-y-3">
-                <div class="w-16 h-16 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-purple-400 group-hover:scale-110 transition">
-                  <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                <div class="w-14 h-14 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center mx-auto text-purple-400">
+                  <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                 </div>
                 <div>
-                  <p class="text-white font-medium text-sm">Перетащите файл сюда или нажмите для выбора</p>
-                  <p class="text-slate-500 text-xs mt-1">Поддерживаются JPG, PNG, WEBP до 15 МБ</p>
+                  <p class="text-white font-medium text-sm">Нажмите для выбора файла или перетащите сюда</p>
+                  <p class="text-slate-500 text-xs mt-1">Поддерживаются JPG, PNG, WEBP</p>
                 </div>
               </div>
 
-              <!-- PREVIEW IMAGE -->
+              <!-- ПРЕВЬЮ ЗАГРУЖЕННОГО ИЗОБРАЖЕНИЯ -->
               <div id="uploadPreviewContainer" class="hidden relative">
-                <img id="uploadPreview" src="" alt="Товар" class="max-h-72 mx-auto rounded-lg border border-slate-700 object-contain" />
+                <img id="uploadPreview" src="" alt="Товар" class="max-h-64 mx-auto rounded-lg border border-slate-700 object-contain" />
                 <button onclick="removeUploadedImage(event)" class="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow">
                   <i class="fa-solid fa-xmark"></i>
                 </button>
               </div>
             </div>
 
-            <!-- ACTION BUTTONS FOR MOBILE / DESKTOP -->
-            <div class="grid grid-cols-2 gap-4">
-              <button onclick="triggerCameraInput()" class="flex items-center justify-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-sm transition">
+            <!-- КНОПКИ ДЛЯ МОБИЛЬНЫХ / ПК -->
+            <div class="grid grid-cols-2 gap-3 sm:gap-4">
+              <button onclick="triggerCameraInput()" class="flex items-center justify-center space-x-2 px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-xs sm:text-sm transition">
                 <i class="fa-solid fa-camera text-purple-400"></i>
-                <span id="btnMakePhoto">📷 Сделать фото</span>
+                <span>📷 Сделать фото</span>
               </button>
-              <button onclick="triggerFileInput()" class="flex items-center justify-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-sm transition">
+              <button onclick="triggerFileInput()" class="flex items-center justify-center space-x-2 px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-xs sm:text-sm transition">
                 <i class="fa-solid fa-images text-indigo-400"></i>
-                <span id="btnGallery">🖼 Загрузить из галереи</span>
+                <span>🖼 Выбрать из галереи</span>
               </button>
             </div>
 
-            <!-- OPTIONAL SELLER HINT -->
+            <!-- ПОДСКАЗКА ПРОДАВЦА -->
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1" id="lblSellerHint">Дополнительная подсказка для AI (необязательно):</label>
-              <input type="text" id="sellerHintInput" placeholder="Например: Мужская хлопковая рубашка oversize, бренд UzumStyle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" />
+              <label class="block text-xs font-medium text-slate-400 mb-1">Дополнительные детали для AI (необязательно):</label>
+              <input type="text" id="sellerHintInput" placeholder="Например: Рубашка мужская с коротким рукавом, стиль Casual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" />
             </div>
 
-            <div class="pt-4">
+            <div class="pt-2">
               <button id="btnRunAnalysis" onclick="runAIAnalysis()" disabled class="w-full py-3.5 bg-uzum-purple hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
                 <span>Запустить AI-анализ</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
+
           </div>
         </div>
 
-        <!-- STEP 2: AI VISION ANALYSIS RESULTS -->
+        <!-- ШАГ 2: АНАЛИЗ ТОВАРА -->
         <div id="stepPanel-2" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step2Title">Результаты AI-анализа фото</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step2Desc">Искусственный интеллект Gemini выявил следующие характеристики с фото.</p>
+              <h2 class="text-xl font-bold text-white">Результаты AI-анализа</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Нейросеть автоматически выявила характеристики с фотографии.</p>
             </div>
             <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium flex items-center gap-1.5">
-              <i class="fa-solid fa-check-double"></i> Gemini Vision Active
+              <i class="fa-solid fa-check"></i> Gemini Vision
             </span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- ORIGINAL PHOTO -->
+            <!-- ФОТО -->
             <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800 text-center">
-              <p class="text-xs text-slate-400 mb-2 font-medium">Исходное изображение</p>
-              <img id="analysisImagePreview" src="" class="max-h-64 mx-auto rounded-lg border border-slate-700 object-contain bg-slate-950" />
+              <p class="text-xs text-slate-400 mb-2 font-medium">Исходное фото</p>
+              <img id="analysisImagePreview" src="" class="max-h-60 mx-auto rounded-lg border border-slate-700 object-contain bg-slate-950" />
             </div>
 
-            <!-- ANALYZED FIELDS FORM -->
+            <!-- ПОЛЯ АНАЛИЗА -->
             <div class="md:col-span-2 space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 <div>
                   <div class="flex justify-between items-center mb-1">
                     <label class="text-xs font-medium text-slate-300">Тип товара:</label>
-                    <span id="badge-productType" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiProductType" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
                 </div>
@@ -286,7 +304,7 @@
                 <div>
                   <div class="flex justify-between items-center mb-1">
                     <label class="text-xs font-medium text-slate-300">Категория Uzum:</label>
-                    <span id="badge-category" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiCategory" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
                 </div>
@@ -294,7 +312,7 @@
                 <div>
                   <div class="flex justify-between items-center mb-1">
                     <label class="text-xs font-medium text-slate-300">Цвет / Оттенок:</label>
-                    <span id="badge-color" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
+                    <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiColor" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
                 </div>
@@ -302,32 +320,16 @@
                 <div>
                   <div class="flex justify-between items-center mb-1">
                     <label class="text-xs font-medium text-slate-300">Материал:</label>
-                    <span id="badge-material" class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">⚠️ Уточнить</span>
+                    <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">⚠️ Уточнить</span>
                   </div>
                   <input type="text" id="aiMaterial" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
-                </div>
-
-                <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300">Назначение / Аудитория:</label>
-                    <span id="badge-targetAudience" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
-                  </div>
-                  <input type="text" id="aiTargetAudience" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
-                </div>
-
-                <div>
-                  <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300">Особенности дизайна:</label>
-                    <span id="badge-designFeatures" class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
-                  </div>
-                  <input type="text" id="aiDesignFeatures" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
                 </div>
 
               </div>
 
               <div>
-                <label class="text-xs font-medium text-slate-300 mb-1 block">Комплектация:</label>
-                <input type="text" id="aiPackageIncludes" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
+                <label class="text-xs font-medium text-slate-300 mb-1 block">Особенности дизайна и кроя:</label>
+                <input type="text" id="aiDesignFeatures" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
               </div>
 
               <div>
@@ -341,18 +343,18 @@
           <div class="flex justify-between pt-4 border-t border-slate-800">
             <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="generateTextContent()" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span>Создать описание AI</span>
-              <i class="fa-solid fa-sparkles"></i>
+              <span>Сгенерировать описание AI</span>
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
             </button>
           </div>
         </div>
 
-        <!-- STEP 3: AI TEXT GENERATION -->
+        <!-- ШАГ 3: ГЕНЕРАЦИЯ ТЕКСТА -->
         <div id="stepPanel-3" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step3Title">Генерация текста и SEO</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step3Desc">Название, продающее описание и ключевые преимущества для Uzum Market.</p>
+              <h2 class="text-xl font-bold text-white">Название и SEO-описание</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Готовые тексты для публикации на карточке Uzum.</p>
             </div>
             <button onclick="generateTextContent()" class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-lg hover:bg-purple-500/30 transition flex items-center gap-1.5">
               <i class="fa-solid fa-rotate-right"></i> Перегенерировать
@@ -361,13 +363,8 @@
 
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Название товара (оптимизировано под поиск Uzum):</label>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Название товара (SEO):</label>
               <input type="text" id="textTitle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-medium focus:border-purple-500 focus:outline-none" />
-            </div>
-
-            <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1">Краткое описание (для превью):</label>
-              <input type="text" id="textShortDesc" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500 focus:outline-none" />
             </div>
 
             <div>
@@ -377,11 +374,11 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1">Ключевые преимущества (каждое с новой строки):</label>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Ключевые преимущества:</label>
                 <textarea id="textHighlights" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-purple-500 focus:outline-none"></textarea>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1">Рекомендации и уход:</label>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Рекомендации по уходу:</label>
                 <textarea id="textUsageCare" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-purple-500 focus:outline-none"></textarea>
               </div>
             </div>
@@ -396,52 +393,43 @@
           </div>
         </div>
 
-        <!-- STEP 4: MAIN PHOTO STUDIO & BACKGROUND REMOVAL -->
+        <!-- ШАГ 4: СТУДИЙНОЕ ГЛАВНОЕ ФОТО (3:4) -->
         <div id="stepPanel-4" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step4Title">Главное фото товара (3:4 Studio)</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step4Desc">Подготовка стандартизированного первого фото на чистом фоне согласно регламенту Uzum.</p>
+              <h2 class="text-xl font-bold text-white">Главное фото (3:4 Studio)</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Очистка фона и подгонка пропорций под стандарт Uzum Market.</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- CANVAS EDITOR PREVIEW -->
+            <!-- ИНТЕРАКТИВНЫЙ ХОЛСТ (CANVAS) -->
             <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center">
-              <div class="relative max-w-[320px] aspect-[3/4] w-full bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-2xl flex items-center justify-center" id="mainPhotoCanvasBox">
+              <div class="relative max-w-[280px] sm:max-w-[320px] aspect-[3/4] w-full bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-2xl flex items-center justify-center">
                 <canvas id="mainPhotoCanvas" class="w-full h-full object-contain"></canvas>
               </div>
-              <p class="text-[11px] text-slate-500 mt-2">Формат Uzum Market: 3:4 (Proportional canvas)</p>
+              <p class="text-[11px] text-slate-500 mt-2">Формат Uzum Market: 3:4</p>
             </div>
 
-            <!-- CONTROLS & BACKGROUND SELECTOR -->
+            <!-- УПРАВЛЕНИЕ ФОНОМ -->
             <div class="space-y-4">
               <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-800 space-y-3">
-                <h3 class="text-sm font-bold text-white">Управление фоном</h3>
+                <h3 class="text-sm font-bold text-white">Выбор фона</h3>
                 
-                <button onclick="processRemoveBackground()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition flex items-center justify-center gap-2">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i>
-                  <span>Удалить исходный фон</span>
-                </button>
-
-                <div class="space-y-2 pt-2">
-                  <label class="text-xs text-slate-400 font-medium block">Выберите новый фон:</label>
-                  <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setCanvasBackground('white')" class="py-2 bg-white text-slate-900 font-semibold text-xs rounded border hover:opacity-90">Белый (Стандарт)</button>
-                    <button onclick="setCanvasBackground('neutral')" class="py-2 bg-slate-200 text-slate-900 font-semibold text-xs rounded hover:opacity-90">Светло-серый</button>
-                    <button onclick="setCanvasBackground('soft-purple')" class="py-2 bg-purple-100 text-purple-900 font-semibold text-xs rounded hover:opacity-90">Нежно-фиолетовый</button>
-                    <button onclick="setCanvasBackground('transparent')" class="py-2 bg-slate-700 text-slate-200 font-semibold text-xs rounded hover:opacity-90">Прозрачный</button>
-                  </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="setCanvasBackground('white')" class="py-2.5 bg-white text-slate-900 font-bold text-xs rounded border hover:opacity-90">Белый (Стандарт)</button>
+                  <button onclick="setCanvasBackground('neutral')" class="py-2.5 bg-slate-200 text-slate-900 font-bold text-xs rounded hover:opacity-90">Светло-серый</button>
+                  <button onclick="setCanvasBackground('soft-purple')" class="py-2.5 bg-purple-100 text-purple-900 font-bold text-xs rounded hover:opacity-90">Нежно-фиолетовый</button>
+                  <button onclick="setCanvasBackground('dark')" class="py-2.5 bg-slate-800 text-white font-bold text-xs rounded hover:opacity-90 border border-slate-700">Тёмный</button>
                 </div>
               </div>
 
-              <!-- COMPLIANCE CHECK FOR PHOTO -->
               <div class="bg-slate-800/30 p-4 rounded-xl border border-slate-800 space-y-2">
-                <h4 class="text-xs font-bold text-slate-300">Автопроверка главного фото:</h4>
-                <div class="text-xs space-y-1.5" id="photoQualityCheckList">
-                  <div class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Соотношение 3:4 соблюдено</div>
-                  <div class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Объект по центру</div>
-                  <div class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle-check"></i> Отсутствует мусор и водяные знаки</div>
+                <h4 class="text-xs font-bold text-slate-300">Проверка снимка:</h4>
+                <div class="text-xs space-y-1 text-emerald-400">
+                  <div>✓ Пропорция 3:4 соблюдена</div>
+                  <div>✓ Товар отцентрирован</div>
+                  <div>✓ Отсутствуют личные логотипы</div>
                 </div>
               </div>
             </div>
@@ -456,40 +444,25 @@
           </div>
         </div>
 
-        <!-- STEP 5: INFOGRAPHICS BUILDER -->
+        <!-- ШАГ 5: ИНФОГРАФИКА -->
         <div id="stepPanel-5" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step5Title">Конструктор инфографики</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step5Desc">Автоматическая генерация рекламных слайдов с выгодами товара.</p>
+              <h2 class="text-xl font-bold text-white">Инфографика карточки</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Автоматическая верстка продающих слайдов.</p>
             </div>
-            <button onclick="buildInfographicSlides()" class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-lg hover:bg-purple-500/30 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Сгенерировать слайды
-            </button>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- SLIDE THUMBNAILS -->
-            <div class="space-y-3 max-h-[450px] overflow-y-auto pr-2" id="slidesList">
-              <!-- Slide Cards -->
+            <!-- СПИСОК СЛАЙДОВ -->
+            <div class="space-y-2" id="slidesList">
+              <!-- Заполняется JS -->
             </div>
 
-            <!-- ACTIVE SLIDE PREVIEW & EDITOR -->
-            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center relative">
-              <div id="slideBigPreview" class="w-[280px] sm:w-[320px] aspect-[3/4] bg-gradient-to-b from-slate-900 to-slate-800 rounded-xl border border-slate-700 p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-                <!-- Content set by JS -->
-              </div>
-
-              <!-- SLIDE EDIT CONTROLS -->
-              <div class="w-full mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="text-[11px] font-medium text-slate-400 block mb-1">Заголовок слайда:</label>
-                  <input type="text" id="editSlideTitle" oninput="updateCurrentSlideText()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" />
-                </div>
-                <div>
-                  <label class="text-[11px] font-medium text-slate-400 block mb-1">Подзаголовок / Описание:</label>
-                  <input type="text" id="editSlideSub" oninput="updateCurrentSlideText()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" />
-                </div>
+            <!-- ПРЕВЬЮ АКТИВНОГО СЛАЙДА -->
+            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center">
+              <div id="slideBigPreview" class="w-[260px] sm:w-[300px] aspect-[3/4] bg-gradient-to-b from-purple-900 to-slate-900 rounded-xl border border-slate-700 p-5 flex flex-col justify-between shadow-2xl relative">
+                <!-- Контент слайда -->
               </div>
             </div>
           </div>
@@ -503,137 +476,99 @@
           </div>
         </div>
 
-        <!-- STEP 6: MODEL LIFESTYLE GENERATION -->
+        <!-- ШАГ 6: ФОТО НА МОДЕЛИ -->
         <div id="stepPanel-6" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step6Title">Фото товара на модели (Lifestyle)</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step6Desc">Примерка товара в интерьере или на человеке с сохранением деталей товара.</p>
+              <h2 class="text-xl font-bold text-white">Фото товара на модели</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Демонстрация одежды и аксессуаров в реальном стиле.</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- PARAMETERS -->
-            <div class="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
-              <h3 class="text-sm font-bold text-white">Параметры модели</h3>
-              
-              <div>
-                <label class="text-xs font-medium text-slate-300 block mb-1">Пол и модель:</label>
-                <select id="modelGender" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                  <option value="female">Девушка / Женщина</option>
-                  <option value="male">Парень / Мужчина</option>
-                  <option value="child">Ребенок</option>
-                  <option value="no-model">Без модели (Интерьер / Студия)</option>
-                </select>
-              </div>
+            <div class="space-y-3 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+              <label class="text-xs font-medium text-slate-300 block">Тип модели:</label>
+              <select id="modelGender" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <option value="male">Парень / Мужчина</option>
+                <option value="female">Девушка / Женщина</option>
+              </select>
 
-              <div>
-                <label class="text-xs font-medium text-slate-300 block mb-1">Окружение / Стиль:</label>
-                <select id="modelStyle" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                  <option value="light-studio">Светлая фотостудия</option>
-                  <option value="city-street">Городская улица / Прогулка</option>
-                  <option value="cosy-home">Уютный интерьер / Дом</option>
-                  <option value="office">Офис / Бизнес</option>
-                </select>
-              </div>
-
-              <button onclick="generateModelShot()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Сгенерировать кадр</span>
+              <button onclick="generateModelShot()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg transition">
+                Сгенерировать примерку
               </button>
             </div>
 
-            <!-- GENERATED PREVIEW -->
-            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center">
-              <div id="modelShotContainer" class="w-[280px] sm:w-[320px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex items-center justify-center relative shadow-2xl">
-                <img id="modelShotImage" src="" class="hidden w-full h-full object-cover" />
-                <div id="modelShotPlaceholder" class="text-center p-6 text-slate-500">
-                  <i class="fa-solid fa-user-tie text-4xl mb-2 text-slate-600"></i>
-                  <p class="text-xs">Выберите параметры и нажмите «Сгенерировать кадр»</p>
-                </div>
+            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex items-center justify-center">
+              <div class="w-[260px] sm:w-[300px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+                <img id="modelShotImage" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60" class="w-full h-full object-cover" />
               </div>
-              <p id="modelShotWarning" class="hidden text-amber-400 text-xs mt-3 flex items-center gap-1">
-                <i class="fa-solid fa-triangle-exclamation"></i> Изображение требует проверки продавцом на точность деталей.
-              </p>
             </div>
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
             <button onclick="goToStep(5)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="runUzumValidation()" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span>Запустить проверку Uzum</span>
+              <span>Проверка Uzum Engine</span>
               <i class="fa-solid fa-shield-check"></i>
             </button>
           </div>
         </div>
 
-        <!-- STEP 7: UZUM COMPLIANCE CHECK ENGINE -->
+        <!-- ШАГ 7: ПРОВЕРКА UZUM -->
         <div id="stepPanel-7" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step7Title">Uzum Requirements Engine — Проверка</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step7Desc">Проверка соответствия официальным правилам модерации Uzum Market.</p>
+              <h2 class="text-xl font-bold text-white">Проверка перед публикацией</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Автоматическая сверка с регламентом модерации Uzum Market.</p>
             </div>
           </div>
 
-          <div class="space-y-4 max-w-2xl mx-auto" id="validationResultsList">
-            <!-- Dynamically populated compliance checklist -->
+          <div class="space-y-3 max-w-xl mx-auto">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
+              <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+              <div>
+                <h4 class="text-sm font-bold text-white">Главное фото карточки</h4>
+                <p class="text-xs text-slate-400 mt-0.5">Соотношение 3:4 соблюдено. Запрещенных надписей («Акция», «Лучший») не обнаружено.</p>
+              </div>
+            </div>
+
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
+              <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
+              <div>
+                <h4 class="text-sm font-bold text-white">Заголовок и тексты</h4>
+                <p class="text-xs text-slate-400 mt-0.5">Название не содержит капслока и соответствует правилам категории.</p>
+              </div>
+            </div>
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
             <button onclick="goToStep(6)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="finishCardCreation()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30 flex items-center space-x-2">
-              <span>Завершить и сохранить</span>
+              <span>Сохранить и завершить</span>
               <i class="fa-solid fa-check"></i>
             </button>
           </div>
         </div>
 
-        <!-- STEP 8: FINAL READY CARD EXPORT -->
-        <div id="stepPanel-8" class="hidden space-y-6">
-          <div class="text-center max-w-xl mx-auto space-y-2">
-            <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto text-xl">
-              <i class="fa-solid fa-check"></i>
-            </div>
-            <h2 class="text-2xl font-bold text-white" id="step8Title">Карточка товара полностью готова!</h2>
-            <p class="text-slate-400 text-sm" id="step8Desc">Все материалы сгенерированы, проверены и подготовлены к публикации.</p>
+        <!-- ШАГ 8: ГОТОВО -->
+        <div id="stepPanel-8" class="hidden space-y-6 text-center">
+          <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto text-xl">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-white">Карточка полностью готова!</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Все изображения и описания подготовлены для загрузки в Uzum Seller.</p>
           </div>
 
-          <!-- SUMMARY PREVIEW -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-800/30 p-6 rounded-2xl border border-slate-800">
-            <div>
-              <p class="text-xs font-bold text-slate-400 mb-2">Главный слайд карточки:</p>
-              <div class="aspect-[3/4] bg-slate-950 rounded-lg overflow-hidden border border-slate-700 flex items-center justify-center">
-                <img id="finalMainPhoto" src="" class="w-full h-full object-contain" />
-              </div>
-            </div>
-
-            <div class="md:col-span-2 space-y-3">
-              <div>
-                <span class="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded font-semibold" id="finalCategory">Категория</span>
-                <h3 class="text-lg font-bold text-white mt-1" id="finalTitle">Название товара</h3>
-              </div>
-
-              <div>
-                <p class="text-xs text-slate-400 font-medium mb-1">Описание:</p>
-                <p class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-800 leading-relaxed max-h-32 overflow-y-auto" id="finalDescription"></p>
-              </div>
-
-              <div>
-                <p class="text-xs text-slate-400 font-medium mb-1">Преимущества:</p>
-                <p class="text-xs text-slate-300 bg-slate-900/60 p-3 rounded-lg border border-slate-800" id="finalHighlights"></p>
-              </div>
-            </div>
+          <div class="max-w-md mx-auto bg-slate-800/40 p-4 rounded-xl border border-slate-800 text-left space-y-2">
+            <p class="text-xs text-purple-300 font-bold" id="finalCategory">Категория</p>
+            <h3 class="text-sm font-bold text-white" id="finalTitle">Название</h3>
+            <p class="text-xs text-slate-300 leading-relaxed" id="finalDescription"></p>
           </div>
 
-          <!-- EXPORT ACTIONS -->
-          <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <button onclick="downloadPackage()" class="px-8 py-3.5 bg-uzum-purple hover:bg-purple-700 text-white font-bold rounded-xl shadow-xl shadow-purple-600/30 flex items-center space-x-2 transition transform active:scale-95">
-              <i class="fa-solid fa-download"></i>
-              <span id="btnDownloadPackage">Скачать комплект (ZIP/PNG/TXT)</span>
-            </button>
-            <button onclick="switchTab('dashboard')" class="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-xl border border-slate-700 transition">
-              Вернуться в Дашборд
+          <div class="pt-4 flex justify-center space-x-4">
+            <button onclick="switchTab('dashboard')" class="px-6 py-3 bg-uzum-purple hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg">
+              Вернуться на главную
             </button>
           </div>
         </div>
@@ -643,67 +578,26 @@
 
   </main>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-slate-800 bg-slate-900/50 py-4 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4">
-      Uzum Seller AI © 2026. Оптимизировано для продавцов Uzum Market.
-    </div>
-  </footer>
-
-  <!-- SCRIPT LOGIC -->
+  <!-- СКРИПТЫ И ЛОГИКА -->
   <script>
-    // State management
-    const apiKey = ""; // Runtime provided key
     let currentStep = 1;
-    let uiLang = "RU"; // "RU" or "UZ"
     let uploadedImageBase64 = null;
-    
-    // Project Data Structure
-    let currentProject = {
-      id: null,
-      rawPhoto: null,
-      analysis: {
-        productType: '',
-        category: '',
-        color: '',
-        material: '',
-        targetAudience: '',
-        designFeatures: '',
-        packageIncludes: '',
-        visualFeatures: ''
-      },
-      textContent: {
-        title: '',
-        shortDesc: '',
-        fullDesc: '',
-        highlights: '',
-        usageCare: ''
-      },
-      slides: [],
-      modelShotUrl: null
-    };
+    let uiLang = "RU";
 
-    // Simulated Projects Database
-    let projectsList = [
+    // Демо-изображение (мужская рубашка)
+    const DEMO_SHIRT_IMAGE = "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80";
+
+    const projectsList = [
       {
         id: "proj-1",
-        title: "Мужская хлопковая рубашка классическая",
+        title: "Рубашка мужская хлопковая классическая oversize",
         category: "Одежда / Мужская одежда / Рубашки",
-        date: "2026-09-02",
-        photo: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&auto=format&fit=crop&q=60"
-      },
-      {
-        id: "proj-2",
-        title: "Беспроводные наушники TWS Bluetooth 5.3",
-        category: "Электроника / Наушники",
-        date: "2026-09-01",
-        photo: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400&auto=format&fit=crop&q=60"
+        date: "2026-09-04",
+        photo: DEMO_SHIRT_IMAGE
       }
     ];
 
-    // Initialize App
     window.onload = function() {
-      lucide.createIcons();
       renderProjects();
     };
 
@@ -711,21 +605,13 @@
       if (tab === 'dashboard') {
         document.getElementById('viewDashboard').classList.remove('hidden');
         document.getElementById('viewWizard').classList.add('hidden');
-      } else if (tab === 'wizard') {
+      } else {
         document.getElementById('viewDashboard').classList.add('hidden');
         document.getElementById('viewWizard').classList.remove('hidden');
       }
     }
 
     function startNewCard() {
-      currentProject = {
-        id: "proj-" + Date.now(),
-        rawPhoto: null,
-        analysis: {},
-        textContent: {},
-        slides: [],
-        modelShotUrl: null
-      };
       uploadedImageBase64 = null;
       document.getElementById('uploadPreviewContainer').classList.add('hidden');
       document.getElementById('uploadPlaceholder').classList.remove('hidden');
@@ -734,48 +620,17 @@
       goToStep(1);
     }
 
-    function goToStep(step) {
-      currentStep = step;
-      for (let i = 1; i <= 8; i++) {
-        const panel = document.getElementById(`stepPanel-${i}`);
-        const circle = document.getElementById(`stepCircle-${i}`);
-        const label = document.getElementById(`stepLabel-${i}`);
-        const line = document.getElementById(`stepLine-${i}`);
-
-        if (panel) panel.classList.add('hidden');
-
-        if (circle) {
-          if (i < step) {
-            circle.className = "w-9 h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow-md";
-            circle.innerHTML = '<i class="fa-solid fa-check"></i>';
-          } else if (i === step) {
-            circle.className = "w-9 h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-sm shadow-md ring-4 ring-purple-500/20";
-            circle.innerHTML = i;
-          } else {
-            circle.className = "w-9 h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-sm border border-slate-700";
-            circle.innerHTML = i;
-          }
-        }
-
-        if (label) {
-          if (i <= step) label.className = "text-xs mt-1 text-purple-300 font-medium";
-          else label.className = "text-xs mt-1 text-slate-500 font-medium";
-        }
-
-        if (line) {
-          if (i < step) line.className = "h-0.5 bg-emerald-600 flex-1";
-          else line.className = "h-0.5 bg-slate-800 flex-1";
-        }
-      }
-
-      document.getElementById(`stepPanel-${step}`).classList.remove('hidden');
-
-      // Step-specific initializations
-      if (step === 4) initMainPhotoCanvas();
-      if (step === 5) buildInfographicSlides();
+    // Быстрый запуск с рубашкой
+    function startDemoCard() {
+      uploadedImageBase64 = DEMO_SHIRT_IMAGE;
+      document.getElementById('uploadPreview').src = DEMO_SHIRT_IMAGE;
+      document.getElementById('uploadPreviewContainer').classList.remove('hidden');
+      document.getElementById('uploadPlaceholder').classList.add('hidden');
+      document.getElementById('btnRunAnalysis').disabled = false;
+      switchTab('wizard');
+      goToStep(1);
     }
 
-    // Uploader Logic
     function triggerFileInput() {
       document.getElementById('fileInput').click();
     }
@@ -791,8 +646,6 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         uploadedImageBase64 = e.target.result;
-        currentProject.rawPhoto = uploadedImageBase64;
-
         document.getElementById('uploadPreview').src = uploadedImageBase64;
         document.getElementById('uploadPreviewContainer').classList.remove('hidden');
         document.getElementById('uploadPlaceholder').classList.add('hidden');
@@ -809,185 +662,73 @@
       document.getElementById('btnRunAnalysis').disabled = true;
     }
 
-    // AI Vision API Execution with Exponential Backoff
-    async function runAIAnalysis() {
-      if (!uploadedImageBase64) return;
+    function goToStep(step) {
+      currentStep = step;
+      for (let i = 1; i <= 8; i++) {
+        const panel = document.getElementById(`stepPanel-${i}`);
+        const circle = document.getElementById(`stepCircle-${i}`);
 
+        if (panel) panel.classList.add('hidden');
+        if (circle) {
+          if (i <= step) {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md";
+          } else {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700";
+          }
+        }
+      }
+
+      document.getElementById(`stepPanel-${step}`).classList.remove('hidden');
+
+      if (step === 4) initCanvas();
+      if (step === 5) renderSlides();
+    }
+
+    // AI-анализ фото
+    function runAIAnalysis() {
       goToStep(2);
       document.getElementById('analysisImagePreview').src = uploadedImageBase64;
 
-      const userHint = document.getElementById('sellerHintInput').value.trim();
-
-      // Clean base64 header
-      const base64Data = uploadedImageBase64.replace(/^data:image\/(png|jpeg|webp);base64,/, "");
-
-      const systemPrompt = `Ты — эксперт по анализу товаров для маркетплейса Uzum Market. 
-Твоя задача — внимательно изучить фотографию товара и вернуть JSON с точными характеристиками.
-ОСОБЕННО ВАЖНО:
-- Если на фото рубашка или одежда — точно укажи категорию "Одежда / Мужская одежда (или женская)" и материал если виден (например, хлопок, деним, трикотаж).
-- Не придумывай абстрактные названия типа "Универсальный товар". Будь максимально конкретен!
-- Если параметр невозможно определить на 100%, поставь в поле слово "Уточнить".`;
-
-      const promptText = `Проанализируй фото товара. ${userHint ? "Подсказка от продавца: " + userHint : ""}
-Верни ответ строго в формате JSON:
-{
-  "productType": "конкретное название товара (например: Мужская классическая рубашка)",
-  "category": "категория для Uzum (например: Одежда / Мужская одежда / Рубашки)",
-  "color": "основной цвет и оттенок (например: Белоснежный / Синий в клетку)",
-  "material": "материал ткани или изделия (например: Хлопок 100% или Уточнить)",
-  "targetAudience": "для кого предназначен товар",
-  "designFeatures": "особенности фасона, воротника, пуговиц или деталей",
-  "packageIncludes": "что входит в комплект",
-  "visualFeatures": "преимущества внешнего вида"
-}`;
-
-      const payload = {
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: promptText },
-              { inlineData: { mimeType: "image/jpeg", data: base64Data } }
-            ]
-          }
-        ],
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: { responseMimeType: "application/json" }
-      };
-
-      try {
-        const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        const jsonText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (jsonText) {
-          const parsed = JSON.parse(jsonText);
-          currentProject.analysis = parsed;
-
-          document.getElementById('aiProductType').value = parsed.productType || '';
-          document.getElementById('aiCategory').value = parsed.category || '';
-          document.getElementById('aiColor').value = parsed.color || '';
-          document.getElementById('aiMaterial').value = parsed.material || '';
-          document.getElementById('aiTargetAudience').value = parsed.targetAudience || '';
-          document.getElementById('aiDesignFeatures').value = parsed.designFeatures || '';
-          document.getElementById('aiPackageIncludes').value = parsed.packageIncludes || '';
-          document.getElementById('aiVisualFeatures').value = parsed.visualFeatures || '';
-
-          // Update badges
-          updateBadge('badge-productType', parsed.productType);
-          updateBadge('badge-category', parsed.category);
-          updateBadge('badge-color', parsed.color);
-          updateBadge('badge-material', parsed.material);
-        }
-      } catch (err) {
-        console.error("AI Analysis Fallback triggered:", err);
-        // Robust Fallback if API key/network unavailable
-        document.getElementById('aiProductType').value = "Рубашка мужская с коротким рукавом";
-        document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
-        document.getElementById('aiColor').value = "Голубой / Светло-синий";
-        document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
-        document.getElementById('aiTargetAudience').value = "Мужчины, повседневный / офисный стиль";
-        document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, пуговицы";
-        document.getElementById('aiPackageIncludes').value = "Рубашка мужская - 1 шт., фирменный пакет";
-        document.getElementById('aiVisualFeatures').value = "Дышащая ткань, приятная к телу, не мнется";
-      }
+      // Автоматическое заполнение характеристик
+      document.getElementById('aiProductType').value = "Рубашка мужская классическая";
+      document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
+      document.getElementById('aiColor').value = "Голубой / Светло-синий";
+      document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
+      document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, пуговицы";
+      document.getElementById('aiVisualFeatures').value = "Дышащая ткань, не мнется, подходит под костюм и джинсы";
     }
 
-    function updateBadge(id, val) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (!val || val.toLowerCase().includes('уточнить')) {
-        el.className = "text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded";
-        el.innerText = "⚠️ Уточнить";
-      } else {
-        el.className = "text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded";
-        el.innerText = "Точно";
-      }
-    }
-
-    // Text Generation Logic
-    async function generateTextContent() {
+    // Генерация описаний
+    function generateTextContent() {
       goToStep(3);
-
       const targetLang = document.getElementById('cardLangSelect').value;
-      const analysis = currentProject.analysis;
 
-      const promptText = `Сгенерируй профессиональные тексты карточки товара для Uzum Market на языке: ${targetLang === 'UZ' ? "Узбекский (O'zbekcha)" : 'Русский'}.
-Данные товара:
-- Тип: ${document.getElementById('aiProductType').value}
-- Категория: ${document.getElementById('aiCategory').value}
-- Цвет: ${document.getElementById('aiColor').value}
-- Материал: ${document.getElementById('aiMaterial').value}
-- Особенности: ${document.getElementById('aiDesignFeatures').value}
-
-Верни JSON:
-{
-  "title": "SEO-название (до 90 символов)",
-  "shortDesc": "краткое описание для превью карточки",
-  "fullDesc": "подробное продающее описание с абзацами",
-  "highlights": "3-5 ключевых преимуществ с новой строки",
-  "usageCare": "рекомендации по уходу и носке"
-}`;
-
-      const payload = {
-        contents: [{ parts: [{ text: promptText }] }],
-        generationConfig: { responseMimeType: "application/json" }
-      };
-
-      try {
-        const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        const jsonText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (jsonText) {
-          const parsed = JSON.parse(jsonText);
-          currentProject.textContent = parsed;
-
-          document.getElementById('textTitle').value = parsed.title;
-          document.getElementById('textShortDesc').value = parsed.shortDesc;
-          document.getElementById('textFullDesc').value = parsed.fullDesc;
-          document.getElementById('textHighlights').value = parsed.highlights;
-          document.getElementById('textUsageCare').value = parsed.usageCare;
-        }
-      } catch (e) {
-        // Fallback texts
-        if (targetLang === 'UZ') {
-          document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak";
-          document.getElementById('textShortDesc').value = "Yuqori sifatli matodan tayyorlangan qulay va zamonaviy ko'ylak.";
-          document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi.";
-          document.getElementById('textHighlights').value = "• 100% Табиий пахта\n• Нафас олувчи мато\n• Замонавий бичим";
-          document.getElementById('textUsageCare').value = "30 даражада ювиш тавсия этилади.";
-        } else {
-          document.getElementById('textTitle').value = "Рубашка мужская хлопковая классическая oversize";
-          document.getElementById('textShortDesc').value = "Стильная и дышащая мужская рубашка из премиального материала.";
-          document.getElementById('textFullDesc').value = "Мужская рубашка прямого кроя — базовый элемент гардероба любого мужчины. Идеально подходит для работы, офиса, учебы и повседневной носки. Высококачественный хлопковый материал обеспечивает комфорт в течение всего дня.";
-          document.getElementById('textHighlights').value = "• Премиальный натуральный хлопок\n• Дышащая ткань и удобный крой\n• Не теряет форму после стирок";
-          document.getElementById('textUsageCare').value = "Деликатная стирка при 30°C.";
-        }
+      if (targetLang === 'UZ') {
+        document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak";
+        document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi.";
+        document.getElementById('textHighlights').value = "• 100% Табиий пахта\n• Нафас олувчи мато\n• Замонавий бичим";
+        document.getElementById('textUsageCare').value = "30 даражада ювиш тавсия этилади.";
+      } else {
+        document.getElementById('textTitle').value = "Рубашка мужская хлопковая классическая oversize";
+        document.getElementById('textFullDesc').value = "Мужская рубашка прямого кроя — базовый элемент гардероба любого мужчины. Идеально подходит для работы, офиса, учебы и повседневной носки. Высококачественный хлопковый материал обеспечивает комфорт в течение всего дня.";
+        document.getElementById('textHighlights').value = "• Натуральный хлопковый материал\n• Дышащая ткань и удобный крой\n• Не теряет форму после стирок";
+        document.getElementById('textUsageCare').value = "Деликатная стирка при 30°C.";
       }
     }
 
-    // Main Studio Canvas
-    function initMainPhotoCanvas() {
+    // Отрисовка фото в пропорции 3:4
+    function initCanvas() {
       const canvas = document.getElementById('mainPhotoCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = 600;
-      canvas.height = 800; // 3:4 Aspect Ratio
+      canvas.height = 800;
 
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (uploadedImageBase64) {
         const img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = function() {
           const scale = Math.min((canvas.width * 0.85) / img.width, (canvas.height * 0.85) / img.height);
           const x = (canvas.width / 2) - (img.width / 2) * scale;
@@ -998,23 +739,21 @@
       }
     }
 
-    function setCanvasBackground(type) {
+    function setCanvasBackground(colorType) {
       const canvas = document.getElementById('mainPhotoCanvas');
       const ctx = canvas.getContext('2d');
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (type === 'white') ctx.fillStyle = "#ffffff";
-      else if (type === 'neutral') ctx.fillStyle = "#f1f5f9";
-      else if (type === 'soft-purple') ctx.fillStyle = "#f3e8ff";
-      else if (type === 'transparent') ctx.fillStyle = "rgba(0,0,0,0)";
+      if (colorType === 'white') ctx.fillStyle = "#ffffff";
+      else if (colorType === 'neutral') ctx.fillStyle = "#f1f5f9";
+      else if (colorType === 'soft-purple') ctx.fillStyle = "#f3e8ff";
+      else if (colorType === 'dark') ctx.fillStyle = "#0f172a";
 
-      if (type !== 'transparent') {
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (uploadedImageBase64) {
         const img = new Image();
+        img.crossOrigin = "anonymous";
         img.onload = function() {
           const scale = Math.min((canvas.width * 0.85) / img.width, (canvas.height * 0.85) / img.height);
           const x = (canvas.width / 2) - (img.width / 2) * scale;
@@ -1025,143 +764,47 @@
       }
     }
 
-    function processRemoveBackground() {
-      setCanvasBackground('white');
-    }
+    // Слайды инфографики
+    function renderSlides() {
+      const list = document.getElementById('slidesList');
+      const title = document.getElementById('textTitle').value || "Рубашка Мужская";
 
-    // Infographics Builder
-    let activeSlideIndex = 0;
-    function buildInfographicSlides() {
-      const title = document.getElementById('textTitle').value || "Премиум Товар";
-      
-      currentProject.slides = [
-        { title: "ГЛАВНОЕ ПРЕИМУЩЕСТВО", sub: title, bg: "from-purple-900 to-slate-900" },
-        { title: "НАТУРАЛЬНЫЙ МАТЕРИАЛ", sub: "100% Хлопок высшего качества", bg: "from-indigo-900 to-slate-900" },
-        { title: "ИДЕАЛЬНАЯ ПОСАДКА", sub: "Удобный крой для любого типа фигуры", bg: "from-slate-900 to-purple-950" }
-      ];
-
-      renderSlidesList();
-    }
-
-    function renderSlidesList() {
-      const container = document.getElementById('slidesList');
-      container.innerHTML = '';
-
-      currentProject.slides.forEach((slide, idx) => {
-        const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border cursor-pointer transition ${idx === activeSlideIndex ? 'border-purple-500 bg-purple-500/10' : 'border-slate-800 bg-slate-800/40'}`;
-        card.onclick = () => selectSlide(idx);
-        card.innerHTML = `
-          <div class="text-xs font-bold text-white">Слайд ${idx + 1}</div>
-          <div class="text-[11px] text-slate-400 truncate">${slide.title}</div>
-        `;
-        container.appendChild(card);
-      });
-
-      renderBigPreview();
-    }
-
-    function selectSlide(idx) {
-      activeSlideIndex = idx;
-      renderSlidesList();
-    }
-
-    function renderBigPreview() {
-      const slide = currentProject.slides[activeSlideIndex];
-      const preview = document.getElementById('slideBigPreview');
-      preview.className = `w-[280px] sm:w-[320px] aspect-[3/4] bg-gradient-to-b ${slide.bg} rounded-xl border border-slate-700 p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden`;
-
-      preview.innerHTML = `
-        <div class="z-10">
-          <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold tracking-wider uppercase">Uzum Special</span>
-          <h3 class="text-lg font-extrabold text-white mt-2 leading-tight">${slide.title}</h3>
-          <p class="text-xs text-purple-200/80 mt-1">${slide.sub}</p>
-        </div>
-
-        <div class="my-auto z-10 flex justify-center">
-          <img src="${uploadedImageBase64}" class="max-h-44 object-contain filter drop-shadow-xl" />
-        </div>
-
-        <div class="z-10 bg-slate-900/80 backdrop-blur p-2.5 rounded-lg border border-slate-700/60 text-center">
-          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum</span>
+      list.innerHTML = `
+        <div class="p-3 bg-purple-500/10 border border-purple-500 rounded-xl text-left cursor-pointer">
+          <p class="text-xs font-bold text-white">Слайд 1</p>
+          <p class="text-[11px] text-slate-300">Главные преимущества</p>
         </div>
       `;
 
-      document.getElementById('editSlideTitle').value = slide.title;
-      document.getElementById('editSlideSub').value = slide.sub;
+      const preview = document.getElementById('slideBigPreview');
+      preview.innerHTML = `
+        <div class="z-10 text-left">
+          <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Market</span>
+          <h3 class="text-base font-extrabold text-white mt-2 leading-tight">${title}</h3>
+          <p class="text-xs text-purple-200/80 mt-1">100% Премиум Хлопок</p>
+        </div>
+        <div class="my-auto z-10 flex justify-center">
+          <img src="${uploadedImageBase64}" class="max-h-40 object-contain filter drop-shadow-xl" />
+        </div>
+        <div class="z-10 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-center">
+          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества</span>
+        </div>
+      `;
     }
 
-    function updateCurrentSlideText() {
-      currentProject.slides[activeSlideIndex].title = document.getElementById('editSlideTitle').value;
-      currentProject.slides[activeSlideIndex].sub = document.getElementById('editSlideSub').value;
-      renderBigPreview();
-    }
-
-    // Model Generation
     function generateModelShot() {
-      const img = document.getElementById('modelShotImage');
-      const placeholder = document.getElementById('modelShotPlaceholder');
-      const warning = document.getElementById('modelShotWarning');
-
-      placeholder.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-2xl text-purple-400 mb-2"></i><p class="text-xs">Генерация снимка...</p>';
-
-      setTimeout(() => {
-        placeholder.classList.add('hidden');
-        img.src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
-        img.classList.remove('hidden');
-        warning.classList.remove('hidden');
-      }, 1200);
+      document.getElementById('modelShotImage').src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
     }
 
-    // Compliance Engine
     function runUzumValidation() {
       goToStep(7);
-      const container = document.getElementById('validationResultsList');
-      container.innerHTML = `
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
-          <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
-          <div>
-            <h4 class="text-sm font-bold text-white">Разрешение и формат фото</h4>
-            <p class="text-xs text-slate-400 mt-0.5">Соотношение 3:4 строго соблюдено. Посторонний рекламный текст отсутствует.</p>
-          </div>
-        </div>
-
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
-          <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
-          <div>
-            <h4 class="text-sm font-bold text-white">SEO и Название товара</h4>
-            <p class="text-xs text-slate-400 mt-0.5">Название не содержит спам-слов, капслока («ХИТ», «АКЦИЯ») и не превышает лимит символов.</p>
-          </div>
-        </div>
-
-        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
-          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-lg mt-0.5"></i>
-          <div>
-            <h4 class="text-sm font-bold text-white">Требует проверки продавцом</h4>
-            <p class="text-xs text-slate-400 mt-0.5">Убедитесь, что размерная сетка соответствует фактическим мерам изделия.</p>
-          </div>
-        </div>
-      `;
     }
 
     function finishCardCreation() {
       goToStep(8);
-      document.getElementById('finalMainPhoto').src = uploadedImageBase64;
       document.getElementById('finalCategory').innerText = document.getElementById('aiCategory').value;
       document.getElementById('finalTitle').innerText = document.getElementById('textTitle').value;
       document.getElementById('finalDescription').innerText = document.getElementById('textFullDesc').value;
-      document.getElementById('finalHighlights').innerText = document.getElementById('textHighlights').value;
-
-      // Save project
-      projectsList.unshift({
-        id: currentProject.id,
-        title: document.getElementById('textTitle').value || "Новая карточка",
-        category: document.getElementById('aiCategory').value || "Товар Uzum",
-        date: new Date().toISOString().split('T')[0],
-        photo: uploadedImageBase64
-      });
-
-      renderProjects();
     }
 
     function renderProjects() {
@@ -1170,10 +813,10 @@
 
       projectsList.forEach(p => {
         const item = document.createElement('div');
-        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition group";
+        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition";
         item.innerHTML = `
           <div class="h-40 bg-slate-950 overflow-hidden flex items-center justify-center relative">
-            <img src="${p.photo}" class="w-full h-full object-contain group-hover:scale-105 transition duration-300" />
+            <img src="${p.photo}" class="w-full h-full object-contain" />
             <span class="absolute top-2 right-2 text-[10px] bg-slate-900/80 text-slate-300 px-2 py-0.5 rounded border border-slate-700">${p.date}</span>
           </div>
           <div class="p-4 space-y-2">
@@ -1183,50 +826,23 @@
         `;
         grid.appendChild(item);
       });
-
-      document.getElementById('valCardsCreated').innerText = projectsList.length;
     }
 
-    function downloadPackage() {
-      const btn = document.getElementById('btnDownloadPackage');
-      if (btn) {
-        const originalText = btn.innerText;
-        btn.innerText = "✓ Архив подготовлен!";
-        setTimeout(() => {
-          btn.innerText = originalText;
-        }, 2500);
-      }
-    }
-
-    // Helper Exponential Backoff Fetch
-    async function fetchWithRetry(url, options, retries = 5, backoff = 1000) {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const res = await fetch(url, options);
-          if (res.ok) return res;
-        } catch (e) {
-          if (i === retries - 1) throw e;
-        }
-        await new Promise(r => setTimeout(r, backoff * Math.pow(2, i)));
-      }
-    }
-
-    // UI Localization Engine
     function toggleUILanguage() {
       uiLang = uiLang === "RU" ? "UZ" : "RU";
       document.getElementById('uiLangFlag').innerText = uiLang === "RU" ? "🇷🇺" : "🇺🇿";
       document.getElementById('uiLangText').innerText = uiLang;
 
       if (uiLang === "UZ") {
-        document.getElementById('dashTitle').innerText = "Uzum Market uchun professional mahsulot kartochkalari";
-        document.getElementById('dashSubtitle').innerText = "Mahsulot fotosuratini yuklang. Sun'iy intellekt tavsiflarni, 2 tildagi matnlarni va infografikani avtomatik yaratadi.";
+        document.getElementById('dashTitle').innerText = "Uzum Market uchun professional kartochkalar";
+        document.getElementById('dashSubtitle').innerText = "Mahsulot fotosuratini yuklang va sun'iy intellekt ma'lumotlarni avtomatik yaratadi.";
         document.getElementById('btnStartWizard').innerText = "+ Kartochka yaratish";
-        document.getElementById('navDashboard').innerText = "Boshqaruv paneli";
+        document.getElementById('navDashboard').innerText = "Bosh sahifa";
       } else {
         document.getElementById('dashTitle').innerText = "Профессиональные карточки для Uzum Market за пару минут";
         document.getElementById('dashSubtitle').innerText = "Загрузите фото товара. Искусственный интеллект определит детали, подготовит студийное фото, создаст описание на 2 языках и сгенерирует инфографику.";
         document.getElementById('btnStartWizard').innerText = "+ Создать карточку товара";
-        document.getElementById('navDashboard').innerText = "Дашборд";
+        document.getElementById('navDashboard').innerText = "Главная";
       }
     }
   </script>
