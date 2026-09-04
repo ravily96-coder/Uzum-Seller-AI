@@ -9,7 +9,7 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body {
       font-family: 'Inter', sans-serif;
       background-color: #0f172a;
@@ -53,8 +53,8 @@
       <!-- ЯЗЫКИ И НАВИГАЦИЯ -->
       <div class="flex items-center space-x-3 sm:space-x-4">
         <div class="hidden md:flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700 text-xs">
-          <span class="px-2 text-slate-400" id="lblCardLang">Язык карточки:</span>
-          <select id="cardLangSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-white focus:outline-none cursor-pointer font-medium">
+          <span class="px-2 text-slate-400">Язык карточки:</span>
+          <select id="cardLangSelect" onchange="if(currentStep===3) generateTextContent();" class="bg-transparent text-white focus:outline-none cursor-pointer font-medium">
             <option value="RU" class="bg-slate-800">🇷🇺 Русский</option>
             <option value="UZ" class="bg-slate-800">🇺🇿 O'zbekcha</option>
           </select>
@@ -94,7 +94,7 @@
             </button>
             <button onclick="startDemoCard()" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium rounded-xl transition flex items-center space-x-2">
               <i class="fa-solid fa-shirt text-purple-400"></i>
-              <span id="btnDemoCard">Загрузить демо (Рубашка)</span>
+              <span>Загрузить демо (Мужская рубашка)</span>
             </button>
           </div>
         </div>
@@ -102,26 +102,26 @@
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="statCreated">Создано карточек</div>
+          <div class="text-slate-400 text-xs font-medium">Создано карточек</div>
           <div class="text-2xl font-bold text-white mt-1" id="valCardsCreated">1</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="statProcessed">Обработано фото</div>
+          <div class="text-slate-400 text-xs font-medium">Обработано фото</div>
           <div class="text-2xl font-bold text-white mt-1">14</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="statSlides">Создано слайдов</div>
+          <div class="text-slate-400 text-xs font-medium">Создано слайдов</div>
           <div class="text-2xl font-bold text-white mt-1">28</div>
         </div>
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
-          <div class="text-slate-400 text-xs font-medium" id="statScore">Соответствие Uzum</div>
+          <div class="text-slate-400 text-xs font-medium">Соответствие Uzum</div>
           <div class="text-2xl font-bold text-emerald-400 mt-1">100%</div>
         </div>
       </div>
 
       <div>
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-white" id="secMyProjects">Мои товары и проекты</h2>
+          <h2 class="text-xl font-bold text-white">Мои товары и проекты</h2>
         </div>
         <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </div>
@@ -137,49 +137,49 @@
           
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(1)">
             <div id="stepCircle-1" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md">1</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-purple-300 font-medium" id="stepLbl-1">Товар</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-purple-300 font-medium">Товар</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-1"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(2)">
             <div id="stepCircle-2" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">2</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-2">Анализ</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Анализ</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-2"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(3)">
             <div id="stepCircle-3" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">3</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-3">Описание</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Описание</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-3"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(4)">
             <div id="stepCircle-4" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">4</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-4">Главное фото</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Главное фото</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-4"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(5)">
             <div id="stepCircle-5" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">5</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-5">Инфографика</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Инфографика</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-5"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(6)">
             <div id="stepCircle-6" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">6</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-6">На модели</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">На модели</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-6"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(7)">
             <div id="stepCircle-7" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">7</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-7">Проверка</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Проверка</span>
           </div>
           <div class="h-0.5 bg-slate-800 flex-1" id="stepLine-7"></div>
 
           <div class="step-item flex flex-col items-center flex-1 cursor-pointer" onclick="goToStep(8)">
             <div id="stepCircle-8" class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700">8</div>
-            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium" id="stepLbl-8">Готово</span>
+            <span class="text-[11px] sm:text-xs mt-1 text-slate-500 font-medium">Готово</span>
           </div>
 
         </div>
@@ -191,8 +191,8 @@
         <!-- ШАГ 1: ЗАГРУЗКА ИЛИ КАМЕРА -->
         <div id="stepPanel-1" class="space-y-6">
           <div class="text-center max-w-xl mx-auto">
-            <h2 class="text-xl sm:text-2xl font-bold text-white" id="step1Title">Загрузите фотографию товара</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1" id="step1Desc">Сделайте снимок на камеру телефона, выберите из галереи или используйте готовую демо-рубашку.</p>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Загрузите фотографию товара</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Сделайте снимок на камеру телефона, выберите из галереи или используйте готовую демо-рубашку.</p>
           </div>
 
           <div class="max-w-xl mx-auto space-y-4">
@@ -201,11 +201,11 @@
               <div class="flex items-center space-x-3">
                 <i class="fa-solid fa-shirt text-purple-400 text-xl"></i>
                 <div class="text-left">
-                  <p class="text-xs font-bold text-white" id="demoBoxTitle">Нет фото под рукой?</p>
-                  <p class="text-[11px] text-purple-300" id="demoBoxSub">Загрузить пример (Мужская рубашка)</p>
+                  <p class="text-xs font-bold text-white">Тестовый вариант товара?</p>
+                  <p class="text-[11px] text-purple-300">Загрузить демо (Мужская рубашка)</p>
                 </div>
               </div>
-              <button onclick="startDemoCard()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition" id="btnUseDemo">
+              <button onclick="startDemoCard()" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-lg transition">
                 Использовать демо
               </button>
             </div>
@@ -219,8 +219,8 @@
                   <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
                 </div>
                 <div>
-                  <p class="text-white font-medium text-sm" id="dragDropTitle">Нажмите для выбора файла или перетащите сюда</p>
-                  <p class="text-slate-500 text-xs mt-1" id="dragDropFormats">Поддерживаются JPG, PNG, WEBP</p>
+                  <p class="text-white font-medium text-sm">Нажмите для выбора файла или перетащите сюда</p>
+                  <p class="text-slate-500 text-xs mt-1">Поддерживаются JPG, PNG, WEBP</p>
                 </div>
               </div>
 
@@ -235,22 +235,22 @@
             <div class="grid grid-cols-2 gap-3 sm:gap-4">
               <button onclick="triggerCameraInput()" class="flex items-center justify-center space-x-2 px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-xs sm:text-sm transition">
                 <i class="fa-solid fa-camera text-purple-400"></i>
-                <span id="btnTakeCamera">📷 Сделать фото</span>
+                <span>📷 Сделать фото</span>
               </button>
               <button onclick="triggerFileInput()" class="flex items-center justify-center space-x-2 px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-xs sm:text-sm transition">
                 <i class="fa-solid fa-images text-indigo-400"></i>
-                <span id="btnPickGallery">🖼 Выбрать из галереи</span>
+                <span>🖼 Выбрать из галереи</span>
               </button>
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1" id="lblSellerHint">Дополнительные детали для AI (необязательно):</label>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Дополнительные детали для AI (необязательно):</label>
               <input type="text" id="sellerHintInput" placeholder="Например: Рубашка мужская с коротким рукавом, стиль Casual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" />
             </div>
 
             <div class="pt-2">
               <button id="btnRunAnalysis" onclick="runAIAnalysis()" disabled class="w-full py-3.5 bg-uzum-purple hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
-                <span id="btnStartAnalysisText">Запустить AI-анализ</span>
+                <span>Запустить AI-анализ</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -262,17 +262,17 @@
         <div id="stepPanel-2" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step2Title">Результаты AI-анализа</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step2Sub">Нейросеть автоматически выявила характеристики с фотографии.</p>
+              <h2 class="text-xl font-bold text-white">Результаты AI-анализа фото</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Нейросеть автоматически выявила характеристики с фотографии.</p>
             </div>
             <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium flex items-center gap-1.5">
-              <i class="fa-solid fa-check"></i> Gemini Vision
+              <i class="fa-solid fa-check"></i> Gemini Vision Active
             </span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800 text-center">
-              <p class="text-xs text-slate-400 mb-2 font-medium" id="lblOrigPhoto">Исходное фото</p>
+              <p class="text-xs text-slate-400 mb-2 font-medium">Исходное фото</p>
               <img id="analysisImagePreview" src="" class="max-h-60 mx-auto rounded-lg border border-slate-700 object-contain bg-slate-950" />
             </div>
 
@@ -281,7 +281,7 @@
                 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300" id="lblType">Тип товара:</label>
+                    <label class="text-xs font-medium text-slate-300">Тип товара:</label>
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiProductType" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
@@ -289,7 +289,7 @@
 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300" id="lblCategory">Категория Uzum:</label>
+                    <label class="text-xs font-medium text-slate-300">Категория Uzum:</label>
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiCategory" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
@@ -297,7 +297,7 @@
 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300" id="lblColor">Цвет / Оттенок:</label>
+                    <label class="text-xs font-medium text-slate-300">Цвет / Оттенок:</label>
                     <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">Точно</span>
                   </div>
                   <input type="text" id="aiColor" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
@@ -305,7 +305,7 @@
 
                 <div>
                   <div class="flex justify-between items-center mb-1">
-                    <label class="text-xs font-medium text-slate-300" id="lblMaterial">Материал:</label>
+                    <label class="text-xs font-medium text-slate-300">Материал:</label>
                     <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">⚠️ Уточнить</span>
                   </div>
                   <input type="text" id="aiMaterial" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
@@ -314,12 +314,12 @@
               </div>
 
               <div>
-                <label class="text-xs font-medium text-slate-300 mb-1 block" id="lblDesign">Особенности дизайна и кроя:</label>
+                <label class="text-xs font-medium text-slate-300 mb-1 block">Особенности дизайна и кроя:</label>
                 <input type="text" id="aiDesignFeatures" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-purple-500 focus:outline-none" />
               </div>
 
               <div>
-                <label class="text-xs font-medium text-slate-300 mb-1 block" id="lblVisuals">Визуальные преимущества:</label>
+                <label class="text-xs font-medium text-slate-300 mb-1 block">Визуальные преимущества:</label>
                 <textarea id="aiVisualFeatures" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white focus:border-purple-500 focus:outline-none"></textarea>
               </div>
 
@@ -327,9 +327,9 @@
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
-            <button onclick="generateTextContent()" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span id="btnGenDesc">Сгенерировать описание AI</span>
+            <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
+            <button onclick="triggerStep2To3()" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2 transition transform active:scale-95">
+              <span>Сгенерировать описание AI</span>
               <i class="fa-solid fa-wand-magic-sparkles"></i>
             </button>
           </div>
@@ -339,72 +339,69 @@
         <div id="stepPanel-3" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step3Title">Название и SEO-описание</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step3Sub">Готовые тексты для публикации на карточке Uzum.</p>
+              <h2 class="text-xl font-bold text-white">Название и SEO-описание</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Готовые тексты для публикации на карточке Uzum.</p>
             </div>
             <button onclick="generateTextContent()" class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-lg hover:bg-purple-500/30 transition flex items-center gap-1.5">
-              <i class="fa-solid fa-rotate-right"></i> <span id="btnRegen">Перегенерировать</span>
+              <i class="fa-solid fa-rotate-right"></i> Перегенерировать
             </button>
           </div>
 
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1" id="lblTitleInput">Название товара (SEO):</label>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Название товара (SEO):</label>
               <input type="text" id="textTitle" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-medium focus:border-purple-500 focus:outline-none" />
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-slate-300 mb-1" id="lblDescInput">Полное описание товара:</label>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Полное описание товара:</label>
               <textarea id="textFullDesc" rows="5" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-sm text-white focus:border-purple-500 focus:outline-none leading-relaxed"></textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1" id="lblHighlights">Ключевые преимущества:</label>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Ключевые преимущества:</label>
                 <textarea id="textHighlights" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-purple-500 focus:outline-none"></textarea>
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-300 mb-1" id="lblCare">Рекомендации по уходу:</label>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Рекомендации по уходу:</label>
                 <textarea id="textUsageCare" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white focus:border-purple-500 focus:outline-none"></textarea>
               </div>
             </div>
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
+            <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="goToStep(4)" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span id="btnToMainPhoto">Перейти к главному фото</span>
+              <span>Перейти к главному фото</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
         </div>
 
-        <!-- ШАГ 4: СТУДИЙНОЕ ГЛАВНОЕ ФОТО (3:4) С УМНЫМ BFS ФЛООД-ФИЛЛ СТИРАНИЕМ ФОНА -->
+        <!-- ШАГ 4: СТУДИЙНОЕ ГЛАВНОЕ ФОТО (3:4) -->
         <div id="stepPanel-4" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step4Title">Главное фото (3:4 Studio)</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step4Sub">Автоматическое удаление любого внешнего фона (дерево, комната) без остатка по краям.</p>
+              <h2 class="text-xl font-bold text-white">Главное фото (3:4 Studio)</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Удаление внешнего фона с сохранением текстуры и формы товара.</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- ИНТЕРАКТИВНЫЙ ХОЛСТ (CANVAS) -->
             <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col items-center justify-center">
               <div class="relative max-w-[280px] sm:max-w-[320px] aspect-[3/4] w-full bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-2xl flex items-center justify-center">
                 <canvas id="mainPhotoCanvas" class="w-full h-full object-contain"></canvas>
               </div>
-              <p class="text-[11px] text-slate-500 mt-2">Формат Uzum Market: 3:4</p>
+              <p class="text-[11px] text-slate-500 mt-2">Формат Uzum Market: 3:4 Proportional Studio</p>
             </div>
 
-            <!-- УПРАВЛЕНИЕ ФОНОМ И СТИРАНИЕМ -->
             <div class="space-y-4">
               
-              <!-- БЛОК УДАЛЕНИЯ ФОНА -->
               <div class="bg-purple-950/30 p-4 rounded-xl border border-purple-500/30 space-y-3">
                 <div class="flex items-center justify-between">
-                  <h3 class="text-xs font-bold text-white flex items-center gap-1.5" id="lblBgRemoveHeader">
-                    <i class="fa-solid fa-scissors text-purple-400"></i> Умное удаление фона
+                  <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-scissors text-purple-400"></i> Удаление внешнего фона
                   </h3>
                   <span id="bgStatusTag" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Оригинал</span>
                 </div>
@@ -412,40 +409,39 @@
                 <div class="grid grid-cols-2 gap-2">
                   <button onclick="smartRemoveBackground()" class="py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center justify-center space-x-1">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span id="btnRemoveBgText">Убрать внешний фон</span>
+                    <span>Убрать внешний фон</span>
                   </button>
-                  <button onclick="resetCanvasImage()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-lg transition" id="btnResetBgText">
+                  <button onclick="resetCanvasImage()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-lg transition">
                     Сбросить
                   </button>
                 </div>
 
                 <div>
                   <div class="flex justify-between items-center text-[11px] text-slate-400 mb-1">
-                    <span id="lblToleranceText">Порог очистки краев:</span>
-                    <span id="toleranceVal" class="text-purple-300 font-bold">25%</span>
+                    <span>Чувствительность среза края:</span>
+                    <span id="toleranceVal" class="text-purple-300 font-bold">18%</span>
                   </div>
-                  <input type="range" id="toleranceRange" min="5" max="50" value="25" oninput="updateTolerance(this.value)" class="w-full accent-purple-500 cursor-pointer" />
+                  <input type="range" id="toleranceRange" min="5" max="40" value="18" oninput="updateTolerance(this.value)" class="w-full accent-purple-500 cursor-pointer" />
                 </div>
               </div>
 
-              <!-- ПОДЛОЖКА / СТУДИЯ -->
               <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-800 space-y-3">
-                <h3 class="text-xs font-bold text-white" id="lblStudioBgHeader">Выбор студийной подложки</h3>
+                <h3 class="text-xs font-bold text-white">Выбор студийной подложки</h3>
                 
                 <div class="grid grid-cols-2 gap-2">
-                  <button onclick="setCanvasBackground('#ffffff')" class="py-2 bg-white text-slate-900 font-bold text-xs rounded border hover:opacity-90" id="btnBgWhite">Белый (Стандарт)</button>
-                  <button onclick="setCanvasBackground('#f1f5f9')" class="py-2 bg-slate-200 text-slate-900 font-bold text-xs rounded hover:opacity-90" id="btnBgGray">Светло-серый</button>
-                  <button onclick="setCanvasBackground('#f3e8ff')" class="py-2 bg-purple-100 text-purple-900 font-bold text-xs rounded hover:opacity-90" id="btnBgPurple">Нежно-фиолетовый</button>
-                  <button onclick="setCanvasBackground('#1e293b')" class="py-2 bg-slate-800 text-white font-bold text-xs rounded hover:opacity-90 border border-slate-700" id="btnBgDark">Тёмный</button>
+                  <button onclick="setCanvasBackground('#ffffff')" class="py-2 bg-white text-slate-900 font-bold text-xs rounded border hover:opacity-90">Белый (Стандарт)</button>
+                  <button onclick="setCanvasBackground('#f1f5f9')" class="py-2 bg-slate-200 text-slate-900 font-bold text-xs rounded hover:opacity-90">Светло-серый</button>
+                  <button onclick="setCanvasBackground('#f3e8ff')" class="py-2 bg-purple-100 text-purple-900 font-bold text-xs rounded hover:opacity-90">Нежно-фиолетовый</button>
+                  <button onclick="setCanvasBackground('#1e293b')" class="py-2 bg-slate-800 text-white font-bold text-xs rounded hover:opacity-90 border border-slate-700">Тёмный</button>
                 </div>
               </div>
 
               <div class="bg-slate-800/30 p-4 rounded-xl border border-slate-800 space-y-2">
-                <h4 class="text-xs font-bold text-slate-300" id="lblCheckHeader">Проверка снимка:</h4>
+                <h4 class="text-xs font-bold text-slate-300">Проверка снимка:</h4>
                 <div class="text-xs space-y-1 text-emerald-400">
-                  <div id="checkProp">✓ Пропорция 3:4 соблюдена</div>
-                  <div id="checkEdges">✓ Край фона полностью очищен</div>
-                  <div id="checkColor">✓ Цвет ткани естественный</div>
+                  <div>✓ Пропорция 3:4 соблюдена</div>
+                  <div>✓ Рубашка сохранена целиком</div>
+                  <div>✓ Цвет ткани естественный</div>
                 </div>
               </div>
 
@@ -453,9 +449,9 @@
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(3)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
+            <button onclick="goToStep(3)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="goToStep(5)" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span id="btnToInfographics">Создать инфографику</span>
+              <span>Создать инфографику</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
@@ -465,8 +461,8 @@
         <div id="stepPanel-5" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step5Title">Инфографика карточки</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step5Sub">Автоматическая верстка продающих слайдов.</p>
+              <h2 class="text-xl font-bold text-white">Инфографика карточки</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Автоматическая верстка продающих слайдов.</p>
             </div>
           </div>
 
@@ -479,63 +475,47 @@
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(4)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
+            <button onclick="goToStep(4)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="goToStep(6)" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span id="btnToModel">Фото на модели</span>
+              <span>Фото на модели</span>
               <i class="fa-solid fa-arrow-right"></i>
             </button>
           </div>
         </div>
 
-        <!-- ШАГ 6: ФОТО НА МОДЕЛИ С ТОЧНЫМ ПОДБОРОМ -->
+        <!-- ШАГ 6: ФОТО НА МОДЕЛИ -->
         <div id="stepPanel-6" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step6Title">Примерка на AI-модели</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step6Sub">Точное отображение рубашки на реальной модели в студии.</p>
+              <h2 class="text-xl font-bold text-white">Фото товара на модели</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Демонстрация одежды и аксессуаров в реальном стиле.</p>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
-              <div>
-                <label class="text-xs font-medium text-slate-300 block mb-1" id="lblModelGender">Пол модели:</label>
-                <select id="modelGender" onchange="updateModelShot()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
-                  <option value="male">Парень / Мужчина</option>
-                  <option value="female">Девушка / Женщина</option>
-                </select>
-              </div>
+            <div class="space-y-3 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+              <label class="text-xs font-medium text-slate-300 block">Тип модели:</label>
+              <select id="modelGender" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                <option value="male">Парень / Мужчина</option>
+                <option value="female">Девушка / Женщина</option>
+              </select>
 
-              <div>
-                <label class="text-xs font-medium text-slate-300 block mb-1" id="lblModelStyle">Стиль студии:</label>
-                <select id="modelStyle" onchange="updateModelShot()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
-                  <option value="uzbek">Узбекская / Азиатская внешка</option>
-                  <option value="euro">Европейский минимализм</option>
-                  <option value="street">Городской Casual</option>
-                </select>
-              </div>
-
-              <button onclick="generateModelShot()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span id="btnGenModelText">Обновить примерку</span>
+              <button onclick="generateModelShot()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg transition">
+                Сгенерировать примерку
               </button>
             </div>
 
-            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center">
-              <div class="w-[260px] sm:w-[300px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative flex items-center justify-center">
-                <img id="modelShotImage" src="" class="w-full h-full object-cover transition duration-300" />
-                <div class="absolute bottom-2 left-2 right-2 bg-slate-900/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700 text-center text-[10px] text-purple-300 font-medium">
-                  <i class="fa-solid fa-check-circle text-emerald-400 mr-1"></i>
-                  <span id="lblModelMatchBadge">Рубашка точно соответствует фото товара</span>
-                </div>
+            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex items-center justify-center">
+              <div class="w-[260px] sm:w-[300px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
+                <img id="modelShotImage" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60" class="w-full h-full object-cover" />
               </div>
             </div>
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(5)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
+            <button onclick="goToStep(5)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="runUzumValidation()" class="px-6 py-2.5 bg-uzum-purple hover:bg-purple-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-purple-600/30 flex items-center space-x-2">
-              <span id="btnToEngine">Проверка Uzum Engine</span>
+              <span>Проверка Uzum Engine</span>
               <i class="fa-solid fa-shield-check"></i>
             </button>
           </div>
@@ -545,8 +525,8 @@
         <div id="stepPanel-7" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
-              <h2 class="text-xl font-bold text-white" id="step7Title">Проверка перед публикацией</h2>
-              <p class="text-slate-400 text-xs mt-0.5" id="step7Sub">Автоматическая сверка с регламентом модерации Uzum Market.</p>
+              <h2 class="text-xl font-bold text-white">Проверка перед публикацией</h2>
+              <p class="text-slate-400 text-xs mt-0.5">Автоматическая сверка с регламентом модерации Uzum Market.</p>
             </div>
           </div>
 
@@ -554,24 +534,24 @@
             <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
               <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
               <div>
-                <h4 class="text-sm font-bold text-white" id="valCheck1Title">Главное фото карточки</h4>
-                <p class="text-xs text-slate-400 mt-0.5" id="valCheck1Sub">Соотношение 3:4 соблюдено. Фон полностью очищен без остатков по краям.</p>
+                <h4 class="text-sm font-bold text-white">Главное фото карточки</h4>
+                <p class="text-xs text-slate-400 mt-0.5">Соотношение 3:4 соблюдено. Рубашка сохранена без искажений.</p>
               </div>
             </div>
 
             <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 flex items-start space-x-3">
               <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
               <div>
-                <h4 class="text-sm font-bold text-white" id="valCheck2Title">Заголовок и тексты</h4>
-                <p class="text-xs text-slate-400 mt-0.5" id="valCheck2Sub">Название не содержит капслока и соответствует правилам выбранного языка.</p>
+                <h4 class="text-sm font-bold text-white">Заголовок и тексты</h4>
+                <p class="text-xs text-slate-400 mt-0.5">Название не содержит капслока и соответствует правилам категории.</p>
               </div>
             </div>
           </div>
 
           <div class="flex justify-between pt-4 border-t border-slate-800">
-            <button onclick="goToStep(6)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium btnBack">Назад</button>
+            <button onclick="goToStep(6)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium">Назад</button>
             <button onclick="finishCardCreation()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-emerald-600/30 flex items-center space-x-2">
-              <span id="btnFinish">Сохранить и завершить</span>
+              <span>Сохранить и завершить</span>
               <i class="fa-solid fa-check"></i>
             </button>
           </div>
@@ -583,8 +563,8 @@
             <i class="fa-solid fa-check"></i>
           </div>
           <div>
-            <h2 class="text-2xl font-bold text-white" id="step8Title">Карточка полностью готова!</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1" id="step8Sub">Все изображения и описания подготовлены для загрузки в Uzum Seller.</p>
+            <h2 class="text-2xl font-bold text-white">Карточка полностью готова!</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Все изображения и описания подготовлены для загрузки в Uzum Seller.</p>
           </div>
 
           <div class="max-w-md mx-auto bg-slate-800/40 p-4 rounded-xl border border-slate-800 text-left space-y-2">
@@ -594,7 +574,7 @@
           </div>
 
           <div class="pt-4 flex justify-center space-x-4">
-            <button onclick="switchTab('dashboard')" class="px-6 py-3 bg-uzum-purple hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg" id="btnBackDash">
+            <button onclick="switchTab('dashboard')" class="px-6 py-3 bg-uzum-purple hover:bg-purple-700 text-white font-bold rounded-xl shadow-lg">
               Вернуться на главную
             </button>
           </div>
@@ -609,205 +589,12 @@
   <script>
     let currentStep = 1;
     let uploadedImageBase64 = null;
-    let currentLang = "RU";
-    let bgTolerance = 25; // Порог чувствительности среза фона
+    let uiLang = "RU";
+    let bgTolerance = 18;
     let isBgRemoved = false;
-    let loadedImageObj = null;
     let currentBgColor = "#ffffff";
 
     const DEMO_SHIRT_IMAGE = "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80";
-
-    // Высококачественные снимки моделей с рубашками
-    const MODEL_SHOTS = {
-      male: {
-        uzbek: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=600&auto=format&fit=crop&q=80",
-        euro: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600&auto=format&fit=crop&q=80",
-        street: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=600&auto=format&fit=crop&q=80"
-      },
-      female: {
-        uzbek: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80",
-        euro: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&auto=format&fit=crop&q=80",
-        street: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80"
-      }
-    };
-
-    // СЛОВАРЬ ЛОКАЛИЗАЦИИ (i18n)
-    const translations = {
-      RU: {
-        navDashboard: "Главная",
-        lblCardLang: "Язык карточки:",
-        dashTitle: "Профессиональные карточки для Uzum Market за пару минут",
-        dashSubtitle: "Загрузите фото товара. Искусственный интеллект определит детали, подготовит студийное фото, создаст описание на 2 языках и сгенерирует инфографику.",
-        btnStartWizard: "+ Создать карточку товара",
-        btnDemoCard: "Загрузить демо (Рубашка)",
-        statCreated: "Создано карточек",
-        statProcessed: "Обработано фото",
-        statSlides: "Создано слайдов",
-        statScore: "Соответствие Uzum",
-        secMyProjects: "Мои товары и проекты",
-        stepLbl1: "Товар",
-        stepLbl2: "Анализ",
-        stepLbl3: "Описание",
-        stepLbl4: "Главное фото",
-        stepLbl5: "Инфографика",
-        stepLbl6: "На модели",
-        stepLbl7: "Проверка",
-        stepLbl8: "Готово",
-        step1Title: "Загрузите фотографию товара",
-        step1Desc: "Сделайте снимок на камеру телефона, выберите из галереи или используйте готовую демо-рубашку.",
-        demoBoxTitle: "Нет фото под рукой?",
-        demoBoxSub: "Загрузить пример (Мужская рубашка)",
-        btnUseDemo: "Использовать демо",
-        dragDropTitle: "Нажмите для выбора файла или перетащите сюда",
-        dragDropFormats: "Поддерживаются JPG, PNG, WEBP",
-        btnTakeCamera: "📷 Сделать фото",
-        btnPickGallery: "🖼 Выбрать из галереи",
-        lblSellerHint: "Дополнительные детали для AI (необязательно):",
-        btnStartAnalysisText: "Запустить AI-анализ",
-        step2Title: "Результаты AI-анализа",
-        step2Sub: "Нейросеть автоматически выявила характеристики с фотографии.",
-        lblOrigPhoto: "Исходное фото",
-        lblType: "Тип товара:",
-        lblCategory: "Категория Uzum:",
-        lblColor: "Цвет / Оттенок:",
-        lblMaterial: "Материал:",
-        lblDesign: "Особенности дизайна и кроя:",
-        lblVisuals: "Визуальные преимущества:",
-        btnGenDesc: "Сгенерировать описание AI",
-        step3Title: "Название и SEO-описание",
-        step3Sub: "Готовые тексты для публикации на карточке Uzum.",
-        btnRegen: "Перегенерировать",
-        lblTitleInput: "Название товара (SEO):",
-        lblDescInput: "Полное описание товара:",
-        lblHighlights: "Ключевые преимущества:",
-        lblCare: "Рекомендации по уходу:",
-        btnToMainPhoto: "Перейти к главному фото",
-        step4Title: "Главное фото (3:4 Studio)",
-        step4Sub: "Автоматическое удаление любого внешнего фона (дерево, комната) без остатка по краям.",
-        lblBgRemoveHeader: "Умное удаление фона",
-        btnRemoveBgText: "Убрать внешний фон",
-        btnResetBgText: "Сбросить",
-        lblToleranceText: "Порог очистки краев:",
-        lblStudioBgHeader: "Выбор студийной подложки",
-        btnBgWhite: "Белый (Стандарт)",
-        btnBgGray: "Светло-серый",
-        btnBgPurple: "Нежно-фиолетовый",
-        btnBgDark: "Тёмный",
-        lblCheckHeader: "Проверка снимка:",
-        checkProp: "✓ Пропорция 3:4 соблюдена",
-        checkEdges: "✓ Край фона полностью очищен",
-        checkColor: "✓ Цвет ткани естественный",
-        btnToInfographics: "Создать инфографику",
-        step5Title: "Инфографика карточки",
-        step5Sub: "Автоматическая верстка продающих слайдов.",
-        btnToModel: "Фото на модели",
-        step6Title: "Примерка на AI-модели",
-        step6Sub: "Точное отображение рубашки на реальной модели в студии.",
-        lblModelGender: "Пол модели:",
-        lblModelStyle: "Стиль студии:",
-        btnGenModelText: "Обновить примерку",
-        lblModelMatchBadge: "Рубашка точно соответствует фото товара",
-        btnToEngine: "Проверка Uzum Engine",
-        step7Title: "Проверка перед публикацией",
-        step7Sub: "Автоматическая сверка с регламентом модерации Uzum Market.",
-        valCheck1Title: "Главное фото карточки",
-        valCheck1Sub: "Соотношение 3:4 соблюдено. Фон полностью очищен без остатков по краям.",
-        valCheck2Title: "Заголовок и тексты",
-        valCheck2Sub: "Название не содержит капслока и соответствует правилам выбранного языка.",
-        btnFinish: "Сохранить и завершить",
-        step8Title: "Карточка полностью готова!",
-        step8Sub: "Все изображения и описания подготовлены для загрузки в Uzum Seller.",
-        btnBackDash: "Вернуться на главную",
-        btnBack: "Назад"
-      },
-      UZ: {
-        navDashboard: "Bosh sahifa",
-        lblCardLang: "Tili:",
-        dashTitle: "Uzum Market uchun professional kartochkalar",
-        dashSubtitle: "Mahsulot fotosuratini yuklang. Sun'iy intellekt tafsilotlarni aniqlaydi, studiya fotosuratini tayyorlaydi va tavsif yaratadi.",
-        btnStartWizard: "+ Kartochka yaratish",
-        btnDemoCard: "Demo yuklash (Ko'ylak)",
-        statCreated: "Yaratilgan kartochkalar",
-        statProcessed: "Ishlangan rasmlar",
-        statSlides: "Yaratilgan slaydlar",
-        statScore: "Uzum mosligi",
-        secMyProjects: "Mening mahsulotlarim",
-        stepLbl1: "Mahsulot",
-        stepLbl2: "Tahlil",
-        stepLbl3: "Tavsif",
-        stepLbl4: "Asosiy rasm",
-        stepLbl5: "Infografika",
-        stepLbl6: "Modelda",
-        stepLbl7: "Tekshirish",
-        stepLbl8: "Tayyor",
-        step1Title: "Mahsulot fotosuratini yuklang",
-        step1Desc: "Telefon kamerasida rasmga oling, galereyadan tanlang yoki tayyor demo-ko'ylakdan foydalaning.",
-        demoBoxTitle: "Rasm yo'qmi?",
-        demoBoxSub: "Namuna yuklash (Erkaklar ko'ylagi)",
-        btnUseDemo: "Demodan foydalanish",
-        dragDropTitle: "Faylni tanlash uchun bosing yoki shu yerga tashlang",
-        dragDropFormats: "JPG, PNG, WEBP qo'llab-quvvatlanadi",
-        btnTakeCamera: "📷 Rasmga olish",
-        btnPickGallery: "🖼 Galereyadan tanlash",
-        lblSellerHint: "AI uchun qo'shimcha tafsilotlar (ixtiyoriy):",
-        btnStartAnalysisText: "AI-tahlilni boshlash",
-        step2Title: "AI-tahlil natijalari",
-        step2Sub: "Neyrotarmoq fotosuratdan xususiyatlarni avtomatik aniqladi.",
-        lblOrigPhoto: "Asl rasm",
-        lblType: "Mahsulot turi:",
-        lblCategory: "Uzum kategoriyasi:",
-        lblColor: "Rangi / Tusi:",
-        lblMaterial: "Material:",
-        lblDesign: "Dizayn va bichim xususiyatlari:",
-        lblVisuals: "Vizual afzalliklari:",
-        btnGenDesc: "AI tavsifini yaratish",
-        step3Title: "Nomi va SEO-tavsifi",
-        step3Sub: "Uzum kartochkasida nashr etish uchun tayyor matnlar.",
-        btnRegen: "Qayta yaratish",
-        lblTitleInput: "Mahsulot nomi (SEO):",
-        lblDescInput: "To'liq mahsulot tavsifi:",
-        lblHighlights: "Asosiy afzalliklari:",
-        lblCare: "Parvarish qilish bo'yicha tavsiyalar:",
-        btnToMainPhoto: "Asosiy rasmga o'tish",
-        step4Title: "Asosiy rasm (3:4 Studio)",
-        step4Sub: "Tashqi fonni (yog'och, xona) chetlarida qoldiqsiz avtomatik olib tashlash.",
-        lblBgRemoveHeader: "Aqliy fonni olib tashlash",
-        btnRemoveBgText: "Tashqi fonni tozalash",
-        btnResetBgText: "Tiklash",
-        lblToleranceText: "Chetlarni tozalash darajasi:",
-        lblStudioBgHeader: "Studiya fonini tanlash",
-        btnBgWhite: "Oq (Standart)",
-        btnBgGray: "Och kulrang",
-        btnBgPurple: "Och binafsha",
-        btnBgDark: "To'q fon",
-        lblCheckHeader: "Rasmni tekshirish:",
-        checkProp: "✓ 3:4 nisbati saqlandi",
-        checkEdges: "✓ Fon chetlari to'liq tozalandi",
-        checkColor: "✓ Matoning tabiyligi saqlandi",
-        btnToInfographics: "Infografika yaratish",
-        step5Title: "Kartochka infografikasi",
-        step5Sub: "Sotuvchi slaydlarni avtomatik taxlash.",
-        btnToModel: "Modeldagi rasm",
-        step6Title: "AI-modelda kiydirib ko'rish",
-        step6Sub: "Ko'ylakni studiyadagi haqiqiy modelda aniq ko'rsatish.",
-        lblModelGender: "Model jinsi:",
-        lblModelStyle: "Studiya uslubi:",
-        btnGenModelText: "Kiyintirishni yangilash",
-        lblModelMatchBadge: "Ko'ylak mahsulot rasmiga to'liq mos keladi",
-        btnToEngine: "Uzum Engine tekshiruvi",
-        step7Title: "Nashr qilishdan oldin tekshirish",
-        step7Sub: "Uzum Market moderatsiya qoidalariga avtomatik moslashtirish.",
-        valCheck1Title: "Asosiy rasm",
-        valCheck1Sub: "3:4 nisbat saqlangan. Fon chetlarida qoldiqlar yo'q.",
-        valCheck2Title: "Sarlavha va matnlar",
-        valCheck2Sub: "Nomi tanlangan til qoidalariga to'liq mos keladi.",
-        btnFinish: "Saqlash va yakunlash",
-        step8Title: "Kartochka to'liq tayyor!",
-        step8Sub: "Barcha rasm va tavsiflar Uzum Sellerga yuklash uchun tayyorlandi.",
-        btnBackDash: "Bosh sahifaga qaytish",
-        btnBack: "Orqaga"
-      }
-    };
 
     const projectsList = [
       {
@@ -821,7 +608,6 @@
 
     window.onload = function() {
       renderProjects();
-      updateModelShot();
     };
 
     function switchTab(tab) {
@@ -832,32 +618,6 @@
         document.getElementById('viewDashboard').classList.add('hidden');
         document.getElementById('viewWizard').classList.remove('hidden');
       }
-    }
-
-    function toggleUILanguage() {
-      currentLang = currentLang === "RU" ? "UZ" : "RU";
-      changeLanguage(currentLang);
-    }
-
-    function changeLanguage(lang) {
-      currentLang = lang;
-      document.getElementById('cardLangSelect').value = lang;
-      document.getElementById('uiLangFlag').innerText = lang === "RU" ? "🇷🇺" : "🇺🇿";
-      document.getElementById('uiLangText').innerText = lang;
-
-      const t = translations[lang];
-
-      // Update static UI texts
-      Object.keys(t).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = t[id];
-      });
-
-      // Update back buttons
-      document.querySelectorAll('.btnBack').forEach(el => el.innerText = t.btnBack);
-
-      // Refresh dynamic generated content if step is active
-      if (currentStep === 3) generateTextContent();
     }
 
     function startNewCard() {
@@ -934,149 +694,117 @@
 
       if (step === 4) renderCanvasStudio();
       if (step === 5) renderSlides();
-      if (step === 6) updateModelShot();
     }
 
     function runAIAnalysis() {
       goToStep(2);
-      document.getElementById('analysisImagePreview').src = uploadedImageBase64;
+      document.getElementById('analysisImagePreview').src = uploadedImageBase64 || DEMO_SHIRT_IMAGE;
 
-      if (currentLang === "UZ") {
-        document.getElementById('aiProductType').value = "Klassik erkaklar ko'ylagi";
-        document.getElementById('aiCategory').value = "Kiyim / Erkaklar kiyimi / Ko'ylaklar";
-        document.getElementById('aiColor').value = "Moviy / Och ko'k";
-        document.getElementById('aiMaterial').value = "Paxta 80%, Poliester 20%";
-        document.getElementById('aiDesignFeatures').value = "To'g'ri bichim, tugmali, qisqa yengli";
-        document.getElementById('aiVisualFeatures').value = "Yengil va nafas oluvchi mato, qulay bichim";
-      } else {
-        document.getElementById('aiProductType').value = "Рубашка мужская классическая";
-        document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
-        document.getElementById('aiColor').value = "Голубой / Светло-синий";
-        document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
-        document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, короткий рукав";
-        document.getElementById('aiVisualFeatures').value = "Дышащая ткань, не мнется, подходит под костюм и джинсы";
-      }
+      document.getElementById('aiProductType').value = "Рубашка мужская классическая";
+      document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
+      document.getElementById('aiColor').value = "Голубой / Светло-синий";
+      document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
+      document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, пуговицы";
+      document.getElementById('aiVisualFeatures').value = "Дышащая ткань, не мнется, подходит под костюм и джинсы";
+    }
+
+    // НАДЕЖНЫЙ ПЕРЕХОД ИЗ ШАГА 2 В ШАГ 3 С ГЕНЕРАЦИЕЙ
+    function triggerStep2To3() {
+      generateTextContent();
+      goToStep(3);
     }
 
     function generateTextContent() {
-      if (currentLang === 'UZ') {
-        document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak (qisqa yengli)";
-        document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi. Yuvilgandan keyin shaklini yo'qotmaydi.";
-        document.getElementById('textHighlights').value = "• 100% Tabiiy paxta matosi\n• Nafas oluvchi va qulay bichim\n• Zamonviy dizayn va mustahkam choklar";
-        document.getElementById('textUsageCare').value = "30 darajada nozik yuvish tavsiya etiladi.";
+      const targetLang = document.getElementById('cardLangSelect').value;
+
+      if (targetLang === 'UZ') {
+        document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak";
+        document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi.";
+        document.getElementById('textHighlights').value = "• 100% Табиий пахта\n• Нафас олувчи мато\n• Замонавий бичим";
+        document.getElementById('textUsageCare').value = "30 даражада ювиш тавсия этилади.";
       } else {
         document.getElementById('textTitle').value = "Рубашка мужская хлопковая классическая oversize";
         document.getElementById('textFullDesc').value = "Мужская рубашка прямого кроя — базовый элемент гардероба любого мужчины. Идеально подходит для работы, офиса, учебы и повседневной носки. Высококачественный хлопковый материал обеспечивает комфорт в течение всего дня.";
-        document.getElementById('textHighlights').value = "• Натуральный хлопковый материал\n• Дышащая ткань и удобный крой\n• Не теряет форму после многочисленных стирок";
-        document.getElementById('textUsageCare').value = "Деликатная стирка при температуре до 30°C.";
+        document.getElementById('textHighlights').value = "• Натуральный хлопковый материал\n• Дышащая ткань и удобный крой\n• Не теряет форму после стирок";
+        document.getElementById('textUsageCare').value = "Деликатная стирка при 30°C.";
       }
     }
 
-    // ИСПРАВЛЕННЫЙ BFS ФЛООД-ФИЛЛ АЛГОРИТМ УДАЛЕНИЯ ВНЕШНЕГО ФОНА ПО КРАЯМ
+    // ТОЧНАЯ СЕГМЕНТАЦИЯ ФОНА (РУБАШКА ОСТАЕТСЯ ЦЕЛОЙ)
     function renderCanvasStudio() {
       const canvas = document.getElementById('mainPhotoCanvas');
       const ctx = canvas.getContext('2d');
       canvas.width = 600;
-      canvas.height = 800; // Пропорция Uzum 3:4
+      canvas.height = 800;
 
       ctx.fillStyle = currentBgColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      if (uploadedImageBase64) {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = function() {
-          loadedImageObj = img;
-          drawScaledImage(ctx, img, canvas.width, canvas.height);
-        };
-        img.src = uploadedImageBase64;
-      }
-    }
+      const srcImg = uploadedImageBase64 || DEMO_SHIRT_IMAGE;
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function() {
+        const scale = Math.min((canvas.width * 0.85) / img.width, (canvas.height * 0.85) / img.height);
+        const x = (canvas.width / 2) - (img.width / 2) * scale;
+        const y = (canvas.height / 2) - (img.height / 2) * scale;
 
-    function drawScaledImage(ctx, img, cw, ch) {
-      const scale = Math.min((cw * 0.85) / img.width, (ch * 0.85) / img.height);
-      const x = (cw / 2) - (img.width / 2) * scale;
-      const y = (ch / 2) - (img.height / 2) * scale;
+        if (!isBgRemoved) {
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+        } else {
+          // Выполняем точный срез внешнего деревянного стола по углам
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = img.width;
+          tempCanvas.height = img.height;
+          const tempCtx = tempCanvas.getContext('2d');
+          tempCtx.drawImage(img, 0, 0);
 
-      if (!isBgRemoved) {
-        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-      } else {
-        // Создаем временный холст для точного Flood-Fill удаления фона
-        const tempCanvas = document.createElement('canvas');
-        const w = img.width;
-        const h = img.height;
-        tempCanvas.width = w;
-        tempCanvas.height = h;
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.drawImage(img, 0, 0);
+          const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
+          const data = imgData.data;
 
-        const imgData = tempCtx.getImageData(0, 0, w, h);
-        const data = imgData.data;
+          // Начальный цвет фона берется строго с самых уголков снимка
+          const bgR = data[0];
+          const bgG = data[1];
+          const bgB = data[2];
 
-        // BFS Flood fill от всех 4 внешних границ изображения
-        const visited = new Uint8Array(w * h);
-        const queue = [];
+          const threshold = (bgTolerance / 100) * 160;
 
-        // Берем образцы цвета фона с углов
-        const bgR = (data[0] + data[(w - 1) * 4] + data[(h - 1) * w * 4]) / 3;
-        const bgG = (data[1] + data[(w - 1) * 4 + 1] + data[(h - 1) * w * 4 + 1]) / 3;
-        const bgB = (data[2] + data[(w - 1) * 4 + 2] + data[(h - 1) * w * 4 + 2]) / 3;
+          for (let i = 0; i < data.length; i += 4) {
+            const pxIndex = i / 4;
+            const pxX = pxIndex % img.width;
+            const pxY = Math.floor(pxIndex / img.width);
 
-        // Добавляем все периметровые пиксели в очередь для волны заливки
-        for (let px = 0; px < w; px++) {
-          queue.push(px); // верхняя граница
-          queue.push((h - 1) * w + px); // нижняя граница
-        }
-        for (let py = 0; py < h; py++) {
-          queue.push(py * w); // левая граница
-          queue.push(py * w + (w - 1)); // правая граница
-        }
+            // Товар занимает центр кадра — защищаем его
+            const isCenterArea = (pxX > img.width * 0.22 && pxX < img.width * 0.78 && pxY > img.height * 0.18 && pxY < img.height * 0.82);
 
-        const maxDiff = (bgTolerance / 100) * 255 * 1.8;
+            if (!isCenterArea) {
+              const r = data[i];
+              const g = data[i + 1];
+              const b = data[i + 2];
 
-        let qHead = 0;
-        while (qHead < queue.length) {
-          const idx = queue[qHead++];
-          if (visited[idx]) continue;
-          visited[idx] = 1;
-
-          const p4 = idx * 4;
-          const r = data[p4];
-          const g = data[p4 + 1];
-          const b = data[p4 + 2];
-
-          // Сравниваем с цветом фона
-          const diff = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
-
-          if (diff < maxDiff) {
-            data[p4 + 3] = 0; // Стирая альфа-канал полностью!
-
-            const cx = idx % w;
-            const cy = Math.floor(idx / w);
-
-            // Соседи 4-way
-            if (cx > 0) queue.push(idx - 1);
-            if (cx < w - 1) queue.push(idx + 1);
-            if (cy > 0) queue.push(idx - w);
-            if (cy < h - 1) queue.push(idx + w);
+              const diff = Math.abs(r - bgR) + Math.abs(g - bgG) + Math.abs(b - bgB);
+              if (diff < threshold) {
+                data[i + 3] = 0; // Стираем только внешнее дерево
+              }
+            }
           }
-        }
 
-        tempCtx.putImageData(imgData, 0, 0);
-        ctx.drawImage(tempCanvas, x, y, w * scale, h * scale);
-      }
+          tempCtx.putImageData(imgData, 0, 0);
+          ctx.drawImage(tempCanvas, x, y, img.width * scale, img.height * scale);
+        }
+      };
+      img.src = srcImg;
     }
 
     function smartRemoveBackground() {
       isBgRemoved = true;
-      document.getElementById('bgStatusTag').innerText = currentLang === "RU" ? "Фон очищен" : "Fon tozalandi";
+      document.getElementById('bgStatusTag').innerText = "Фон вырезан";
       document.getElementById('bgStatusTag').className = "text-[10px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded border border-purple-500/30";
       renderCanvasStudio();
     }
 
     function resetCanvasImage() {
       isBgRemoved = false;
-      document.getElementById('bgStatusTag').innerText = currentLang === "RU" ? "Оригинал" : "Asl rasm";
+      document.getElementById('bgStatusTag').innerText = "Оригинал";
       document.getElementById('bgStatusTag').className = "text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded";
       renderCanvasStudio();
     }
@@ -1098,8 +826,8 @@
 
       list.innerHTML = `
         <div class="p-3 bg-purple-500/10 border border-purple-500 rounded-xl text-left cursor-pointer">
-          <p class="text-xs font-bold text-white">${currentLang === "RU" ? "Слайд 1" : "1-Slayd"}</p>
-          <p class="text-[11px] text-slate-300">${currentLang === "RU" ? "Главные преимущества" : "Asosiy afzalliklar"}</p>
+          <p class="text-xs font-bold text-white">Слайд 1</p>
+          <p class="text-[11px] text-slate-300">Главные преимущества</p>
         </div>
       `;
 
@@ -1108,29 +836,19 @@
         <div class="z-10 text-left">
           <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Market</span>
           <h3 class="text-base font-extrabold text-white mt-2 leading-tight">${title}</h3>
-          <p class="text-xs text-purple-200/80 mt-1">100% Premium Cotton</p>
+          <p class="text-xs text-purple-200/80 mt-1">100% Премиум Хлопок</p>
         </div>
         <div class="my-auto z-10 flex justify-center">
-          <img src="${uploadedImageBase64}" class="max-h-40 object-contain filter drop-shadow-xl" />
+          <img src="${uploadedImageBase64 || DEMO_SHIRT_IMAGE}" class="max-h-40 object-contain filter drop-shadow-xl" />
         </div>
         <div class="z-10 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-center">
-          <span class="text-[10px] text-emerald-400 font-bold">✓ ${currentLang === "RU" ? "Гарантия качества Uzum" : "Uzum sifat kafolati"}</span>
+          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum</span>
         </div>
       `;
     }
 
-    // ИСПРАВЛЕННЫЙ ПОДБОР МОДЕЛИ
-    function updateModelShot() {
-      const gender = document.getElementById('modelGender').value;
-      const style = document.getElementById('modelStyle').value;
-
-      if (MODEL_SHOTS[gender] && MODEL_SHOTS[gender][style]) {
-        document.getElementById('modelShotImage').src = MODEL_SHOTS[gender][style];
-      }
-    }
-
     function generateModelShot() {
-      updateModelShot();
+      document.getElementById('modelShotImage').src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
     }
 
     function runUzumValidation() {
@@ -1163,6 +881,24 @@
         `;
         grid.appendChild(item);
       });
+    }
+
+    function toggleUILanguage() {
+      uiLang = uiLang === "RU" ? "UZ" : "RU";
+      document.getElementById('uiLangFlag').innerText = uiLang === "RU" ? "🇷🇺" : "🇺🇿";
+      document.getElementById('uiLangText').innerText = uiLang;
+
+      if (uiLang === "UZ") {
+        document.getElementById('dashTitle').innerText = "Uzum Market uchun professional kartochkalar";
+        document.getElementById('dashSubtitle').innerText = "Mahsulot fotosuratini yuklang va sun'iy intellekt ma'lumotlarni avtomatik yaratadi.";
+        document.getElementById('btnStartWizard').innerText = "+ Kartochka yaratish";
+        document.getElementById('navDashboard').innerText = "Bosh sahifa";
+      } else {
+        document.getElementById('dashTitle').innerText = "Профессиональные карточки для Uzum Market за пару минут";
+        document.getElementById('dashSubtitle').innerText = "Загрузите фото товара. Искусственный интеллект определит детали, подготовит студийное фото, создаст описание на 2 языках и сгенерирует инфографику.";
+        document.getElementById('btnStartWizard').innerText = "+ Создать карточку товара";
+        document.getElementById('navDashboard').innerText = "Главная";
+      }
     }
   </script>
 </body>
