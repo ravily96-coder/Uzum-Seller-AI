@@ -630,7 +630,164 @@
 
     window.onload = function() {
       renderProjects();
+      setupDropZone();
     };
+
+    function switchTab(tabName) {
+      const viewDash = document.getElementById('viewDashboard');
+      const viewWiz = document.getElementById('viewWizard');
+
+      if (tabName === 'dashboard') {
+        viewDash.classList.remove('hidden');
+        viewWiz.classList.add('hidden');
+      } else if (tabName === 'wizard') {
+        viewDash.classList.add('hidden');
+        viewWiz.classList.remove('hidden');
+      }
+    }
+
+    function goToStep(stepNum) {
+      if (stepNum < 1 || stepNum > 8) return;
+      currentStep = stepNum;
+
+      // Обновление отображения панелей
+      for (let i = 1; i <= 8; i++) {
+        const panel = document.getElementById(`stepPanel-${i}`);
+        if (panel) {
+          panel.classList.toggle('hidden', i !== stepNum);
+        }
+
+        // Обновление индикаторов шагов
+        const circle = document.getElementById(`stepCircle-${i}`);
+        const line = document.getElementById(`stepLine-${i}`);
+
+        if (circle) {
+          if (i === stepNum) {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md ring-2 ring-purple-400";
+          } else if (i < stepNum) {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md";
+            circle.innerHTML = "✓";
+          } else {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700";
+            circle.innerText = i;
+          }
+        }
+
+        if (line) {
+          line.className = i < stepNum ? "h-0.5 bg-emerald-500 flex-1" : "h-0.5 bg-slate-800 flex-1";
+        }
+      }
+
+      // Специфическая инициализация шагов
+      if (stepNum === 4) {
+        initCanvas();
+      } else if (stepNum === 5) {
+        renderSlides();
+      }
+    }
+
+    function triggerFileInput() {
+      document.getElementById('fileInput').click();
+    }
+
+    function triggerCameraInput() {
+      document.getElementById('cameraInput').click();
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadedImageBase64 = e.target.result;
+        processedImageBase64 = null;
+        isBgRemoved = false;
+
+        const imgPreview = document.getElementById('uploadPreview');
+        imgPreview.src = uploadedImageBase64;
+
+        document.getElementById('uploadPreviewContainer').classList.remove('hidden');
+        document.getElementById('uploadPlaceholder').classList.add('hidden');
+        document.getElementById('btnRunAnalysis').disabled = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeUploadedImage(event) {
+      if (event) event.stopPropagation();
+      uploadedImageBase64 = null;
+      processedImageBase64 = null;
+      isBgRemoved = false;
+
+      document.getElementById('fileInput').value = '';
+      document.getElementById('cameraInput').value = '';
+      document.getElementById('uploadPreviewContainer').classList.add('hidden');
+      document.getElementById('uploadPlaceholder').classList.remove('hidden');
+      document.getElementById('btnRunAnalysis').disabled = true;
+    }
+
+    function setupDropZone() {
+      const dropZone = document.getElementById('dropZone');
+      if (!dropZone) return;
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files[0]) {
+          const input = document.getElementById('fileInput');
+          input.files = files;
+          handleFileSelect({ target: { files: files } });
+        }
+      });
+    }
+
+    function runAIAnalysis() {
+      if (!uploadedImageBase64) return;
+
+      const hint = document.getElementById('sellerHintInput').value || "";
+      const isUzbek = uiLang === "UZ";
+
+      // Заполнение предсказанных данных AI
+      document.getElementById('aiProductType').value = hint.includes("Рубашка") || !hint ? (isUzbek ? "Erkaklar ko'ylagi" : "Рубашка мужская") : hint;
+      document.getElementById('aiCategory').value = isUzbek ? "Kiyim / Erkaklar kiyimi / Ko'ylaklar" : "Одежда / Мужская одежда / Рубашки";
+      document.getElementById('aiColor').value = isUzbek ? "Moviy / Havo rang" : "Голубой / Светло-синий";
+      document.getElementById('aiMaterial').value = "100% Пахта / Хлопок (Premium)";
+      document.getElementById('aiDesignFeatures').value = isUzbek ? "Klassik yoqa, tugmali, oversayz bichim" : "Прямой крой, классический воротник, пуговицы в тон";
+      document.getElementById('aiVisualFeatures').value = isUzbek ? "Yengil nafas oladigan mato, g'ijim bo'lmaydi" : "Легкая дышащая ткань, износостойкая нить, аккуратные швы";
+
+      document.getElementById('analysisImagePreview').src = getActiveProductImage();
+      goToStep(2);
+    }
+
+    function generateTextContent() {
+      const productType = document.getElementById('aiProductType').value || "Рубашка";
+      const material = document.getElementById('aiMaterial').value || "100% Хлопок";
+      const isUzbek = uiLang === "UZ";
+
+      if (isUzbek) {
+        document.getElementById('textTitle').value = `${productType} klassik paxtali premium sifat`;
+        document.getElementById('textFullDesc').value = `Yuqori sifatli ${material} matosidan tikilgan zamonaviy erkaklar ko'ylagi. Har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Mato havo o'tkazuvchan, terlatmaydi va kun davomida qulaylik beradi.`;
+        document.getElementById('textHighlights').value = `• 100% tabiiy paxta mato\n• Qulay va zamonaviy bichim\n• Yuvilgandan so'ng rangi o'chmaydi`;
+        document.getElementById('textUsageCare').value = `30°C gacha bo'lgan haroratda nozik yuvish tavsiya etiladi. Ichki tomonidan dazmollang.`;
+      } else {
+        document.getElementById('textTitle').value = `${productType} хлопковая классическая оверсайз`;
+        document.getElementById('textFullDesc').value = `Стильная и комфортная мужская рубашка из натурального материала (${material}). Идеально подходит как для повседневной носки, так и для офиса или праздничных мероприятий. Ткань отлично дышит, приятна к телу и сохраняет форму.`;
+        document.getElementById('textHighlights').value = `• 100% натуральный премиум хлопок\n• Дышащий материал высокой плотности\n• Ровные и надежные швы`;
+        document.getElementById('textUsageCare').value = `Деликатная стирка при температуре до 30°C. Гладить в режиме «Хлопок» с изнаночной стороны.`;
+      }
+
+      goToStep(3);
+    }
 
     function getActiveProductImage() {
       return (isBgRemoved && processedImageBase64) ? processedImageBase64 : uploadedImageBase64;
@@ -656,10 +813,9 @@
         const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
         const data = imgData.data;
 
-        // Взятие образцов фона по углам
         const w = tempCanvas.width;
         const h = tempCanvas.height;
-        const sampleOffset = 10;
+        const sampleOffset = Math.min(10, Math.floor(w * 0.02));
         
         function getPixelColor(x, y) {
           const idx = (y * w + x) * 4;
@@ -673,7 +829,7 @@
           getPixelColor(w - sampleOffset, h - sampleOffset)
         ];
 
-        const maxDist = (thresholdVal / 100) * 441.67; // 441.67 = max Euclidean distance RGB
+        const maxDist = (thresholdVal / 100) * 441.67;
 
         for (let i = 0; i < data.length; i += 4) {
           const r = data[i];
@@ -687,12 +843,11 @@
           }
 
           if (minDiff < maxDist) {
-            // Мягкое альфа-размытие на границе
             if (minDiff > maxDist * 0.75) {
               const alpha = ((minDiff - maxDist * 0.75) / (maxDist * 0.25)) * 255;
               data[i+3] = Math.min(data[i+3], alpha);
             } else {
-              data[i+3] = 0; // Полный прозрачный фон
+              data[i+3] = 0;
             }
           }
         }
@@ -701,7 +856,6 @@
         processedImageBase64 = tempCanvas.toDataURL('image/png');
         isBgRemoved = true;
 
-        // Обновление статуса в интерфейсе
         const badge = document.getElementById('bgStatusBadge');
         if (badge) {
           badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-medium";
@@ -725,7 +879,6 @@
     }
 
     function updateAllImagePreviews() {
-      const activeImg = getActiveProductImage();
       if (currentStep === 4) {
         setCanvasBackground(currentCanvasBg);
       } else if (currentStep === 5) {
@@ -744,7 +897,6 @@
       goToStep(1);
     }
 
-    // Быстрый запуск с рубашкой
     function startDemoCard() {
       uploadedImageBase64 = DEMO_SHIRT_IMAGE;
       processedImageBase64 = null;
@@ -761,6 +913,10 @@
       currentCanvasBg = colorType;
       const canvas = document.getElementById('mainPhotoCanvas');
       if (!canvas) return;
+
+      canvas.width = 600;
+      canvas.height = 800; // Пропорции 3:4
+
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -777,7 +933,7 @@
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = function() {
-          const scale = Math.min((canvas.width * 0.85) / img.width, (canvas.height * 0.85) / img.height);
+          const scale = Math.min((canvas.width * 0.82) / img.width, (canvas.height * 0.82) / img.height);
           const x = (canvas.width / 2) - (img.width / 2) * scale;
           const y = (canvas.height / 2) - (img.height / 2) * scale;
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
@@ -793,19 +949,27 @@
     function renderSlides() {
       const list = document.getElementById('slidesList');
       const title = document.getElementById('textTitle').value || "Рубашка Мужская";
-      const activeImg = getActiveProductImage();
+      const activeImg = getActiveProductImage() || DEMO_SHIRT_IMAGE;
 
       list.innerHTML = `
-        <div class="p-3 bg-purple-500/10 border border-purple-500 rounded-xl text-left cursor-pointer">
-          <p class="text-xs font-bold text-white">Слайд 1</p>
-          <p class="text-[11px] text-slate-300">Главные преимущества</p>
+        <div class="p-3 bg-purple-500/20 border border-purple-500 rounded-xl text-left cursor-pointer transition">
+          <p class="text-xs font-bold text-white">Слайд 1 (Главный)</p>
+          <p class="text-[11px] text-purple-300">Ключевые преимущества</p>
+        </div>
+        <div class="p-3 bg-slate-800/60 border border-slate-700/60 hover:border-purple-500/50 rounded-xl text-left cursor-pointer transition">
+          <p class="text-xs font-bold text-white">Слайд 2 (Детали)</p>
+          <p class="text-[11px] text-slate-400">Качество ткани и швы</p>
+        </div>
+        <div class="p-3 bg-slate-800/60 border border-slate-700/60 hover:border-purple-500/50 rounded-xl text-left cursor-pointer transition">
+          <p class="text-xs font-bold text-white">Слайд 3 (Размеры)</p>
+          <p class="text-[11px] text-slate-400">Таблица размеров</p>
         </div>
       `;
 
       const preview = document.getElementById('slideBigPreview');
       preview.innerHTML = `
         <div class="z-10 text-left">
-          <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Special</span>
+          <span class="text-[9px] bg-purple-500/40 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Special</span>
           <h3 class="text-base font-extrabold text-white mt-2 leading-tight">${title}</h3>
           <p class="text-xs text-purple-200/80 mt-1">100% Премиум Хлопок</p>
         </div>
@@ -813,13 +977,19 @@
           <img src="${activeImg}" class="max-h-48 object-contain filter drop-shadow-2xl" />
         </div>
         <div class="z-10 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-center">
-          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum</span>
+          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum Market</span>
         </div>
       `;
     }
 
     function generateModelShot() {
-      document.getElementById('modelShotImage').src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
+      const gender = document.getElementById('modelGender').value;
+      const img = document.getElementById('modelShotImage');
+      if (gender === 'female') {
+        img.src = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=60";
+      } else {
+        img.src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
+      }
     }
 
     function runUzumValidation() {
@@ -828,18 +998,20 @@
 
     function finishCardCreation() {
       goToStep(8);
-      document.getElementById('finalCategory').innerText = document.getElementById('aiCategory').value;
-      document.getElementById('finalTitle').innerText = document.getElementById('textTitle').value;
-      document.getElementById('finalDescription').innerText = document.getElementById('textFullDesc').value;
+      document.getElementById('finalCategory').innerText = document.getElementById('aiCategory').value || "Категория Uzum";
+      document.getElementById('finalTitle').innerText = document.getElementById('textTitle').value || "Название товара";
+      document.getElementById('finalDescription').innerText = document.getElementById('textFullDesc').value || "Описание";
     }
 
     function renderProjects() {
       const grid = document.getElementById('projectsGrid');
+      if (!grid) return;
       grid.innerHTML = '';
 
       projectsList.forEach(p => {
         const item = document.createElement('div');
-        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition";
+        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition cursor-pointer";
+        item.onclick = function() { startDemoCard(); };
         item.innerHTML = `
           <div class="h-40 bg-slate-950 overflow-hidden flex items-center justify-center relative">
             <img src="${p.photo}" class="w-full h-full object-contain" />
