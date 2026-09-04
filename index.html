@@ -1077,26 +1077,86 @@ try {
 }
 }
 
-    function triggerStep2To3() {
-      generateTextContent();
-      goToStep(3);
-    }
+    async function triggerStep2To3() {
+    const success = await generateTextContent();
 
-    function generateTextContent() {
-      const targetLang = document.getElementById('cardLangSelect').value;
-
-      if (targetLang === 'UZ') {
-        document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak";
-        document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi.";
-        document.getElementById('textHighlights').value = "• 100% Табиий пахта\n• Нафас олувчи мато\n• Замонавий бичим";
-        document.getElementById('textUsageCare').value = "30 даражада ювиш тавсия этилади.";
-      } else {
-        document.getElementById('textTitle').value = "Рубашка мужская хлопковая классическая oversize";
-        document.getElementById('textFullDesc').value = "Мужская рубашка прямого кроя — базовый элемент гардероба любого мужчины. Идеально подходит для работы, офиса, учебы и повседневной носки. Высококачественный хлопковый материал обеспечивает комфорт в течение всего дня.";
-        document.getElementById('textHighlights').value = "• Натуральный хлопковый материал\n• Дышащая ткань и удобный крой\n• Не теряет форму после стирок";
-        document.getElementById('textUsageCare').value = "Деликатная стирка при 30°C.";
-      }
+    if (success) {
+        goToStep(3);
     }
+}
+
+async function generateTextContent() {
+
+    const targetLangElement = document.getElementById('cardLangSelect');
+    const targetLang = targetLangElement ? targetLangElement.value : 'RU';
+
+    const productType = document.getElementById('aiProductType').value;
+    const category = document.getElementById('aiCategory').value;
+    const color = document.getElementById('aiColor').value;
+    const material = document.getElementById('aiMaterial').value;
+    const designFeatures = document.getElementById('aiDesignFeatures').value;
+    const visualFeatures = document.getElementById('aiVisualFeatures').value;
+
+    showToast('Gemini генерирует описание товара...');
+
+    try {
+
+        const response = await fetch(
+            'http://localhost:3000/api/generate-description',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productType: productType,
+                    category: category,
+                    color: color,
+                    material: material,
+                    designFeatures: designFeatures,
+                    visualFeatures: visualFeatures,
+                    language: targetLang
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || 'Ошибка генерации описания'
+            );
+        }
+
+        document.getElementById('textTitle').value =
+            result.title || '';
+
+        document.getElementById('textFullDesc').value =
+            result.description || '';
+
+        document.getElementById('textHighlights').value =
+            Array.isArray(result.highlights)
+                ? result.highlights.map(x => '• ' + x).join('\n')
+                : (result.highlights || '');
+
+        document.getElementById('textUsageCare').value =
+            result.usage || '';
+
+        showToast('Описание успешно создано Gemini');
+
+        return true;
+
+    } catch (error) {
+
+        console.error('Description error:', error);
+
+        showToast(
+            'Ошибка генерации описания: ' + error.message
+        );
+
+        return false;
+    }
+}
 
     function renderCanvasStudio() {
       const canvas = document.getElementById('mainPhotoCanvas');
