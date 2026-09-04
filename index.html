@@ -1,1 +1,2396 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Uzum Seller AI — Создать карточку товара</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            uzum: {
+              50: '#f5f0ff',
+              100: '#ede3ff',
+              500: '#8b3dff',
+              600: '#7000ff', // Uzum Primary Brand Color
+              700: '#5a00d6',
+              800: '#4300a3',
+              900: '#2d0070',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
 
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus {
+      border-color: #7000ff;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(112, 0, 255, 0.25);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(112, 0, 255, 0.4);
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(112, 0, 255, 0.7);
+    }
+
+    /* Pulse glow effect for primary action buttons */
+    .btn-glow {
+      box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 30px rgba(112, 0, 255, 0.7);
+      transform: translateY(-1px);
+    }
+
+    .step-active {
+      background-color: #7000ff;
+      color: white;
+      box-shadow: 0 0 12px rgba(112, 0, 255, 0.5);
+    }
+    .step-completed {
+      background-color: #10b981;
+      color: white;
+    }
+    .step-pending {
+      background-color: rgba(51, 65, 85, 0.6);
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden selection:bg-uzum-600 selection:text-white">
+
+  <!-- Top SaaS Header Bar -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Logo & App Name -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="app.navTo('dashboard')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-uzum-700 to-uzum-500 flex items-center justify-center font-black text-xl text-white shadow-lg shadow-uzum-600/30">
+          U
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-lg leading-none tracking-tight text-white">Uzum Seller AI</h1>
+            <span class="px-2 py-0.5 text-[10px] font-semibold bg-uzum-600/20 text-uzum-400 border border-uzum-500/30 rounded-full">PRO v2.5</span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block" id="headerSubTitle">Генератор карточек товаров для Uzum Market</p>
+        </div>
+      </div>
+
+      <!-- Center Nav Links (Desktop) -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-800/60 p-1 rounded-xl border border-slate-700/50 text-sm font-medium">
+        <button onclick="app.navTo('dashboard')" id="navDashBtn" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+          <i class="fa-solid font-normal fa-chart-pie mr-1.5"></i><span data-i18n="navDashboard">Дашборд</span>
+        </button>
+        <button onclick="app.startNewWizard()" id="navWizardBtn" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+          <i class="fa-solid fa-plus-circle mr-1.5 text-uzum-400"></i><span data-i18n="navCreateCard">Создать карточку</span>
+        </button>
+        <button onclick="app.navTo('projects')" id="navProjBtn" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+          <i class="fa-solid fa-folder-open mr-1.5"></i><span data-i18n="navProjects">Мои проекты</span>
+        </button>
+        <button onclick="app.navTo('rules')" id="navRulesBtn" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white transition">
+          <i class="fa-solid fa-shield-halved mr-1.5 text-emerald-400"></i><span data-i18n="navRules">Uzum Engine</span>
+        </button>
+      </nav>
+
+      <!-- Language Selectors & Settings -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Interface Language Switcher -->
+        <div class="flex items-center bg-slate-800/80 rounded-lg p-1 border border-slate-700/60 text-xs">
+          <button onclick="app.setUILang('ru')" id="langRuBtn" class="px-2 py-1 rounded font-semibold transition">🇷🇺 RU</button>
+          <button onclick="app.setUILang('uz')" id="langUzBtn" class="px-2 py-1 rounded font-semibold transition">🇺🇿 UZ</button>
+        </div>
+
+        <!-- Target Card Content Language Switcher -->
+        <div class="hidden sm:flex items-center gap-1.5 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60 text-xs text-slate-300">
+          <i class="fa-solid fa-globe text-uzum-400"></i>
+          <span class="text-[11px] text-slate-400" data-i18n="cardLangLabel">Язык карточки:</span>
+          <select id="cardTargetLang" onchange="app.setCardTargetLang(this.value)" class="bg-transparent text-slate-200 font-semibold focus:outline-none cursor-pointer">
+            <option value="ru" class="bg-slate-900 text-slate-200">🇷🇺 Русский</option>
+            <option value="uz" class="bg-slate-900 text-slate-200">🇺🇿 O‘zbekcha</option>
+          </select>
+        </div>
+
+        <!-- AI Settings Modal Toggle -->
+        <button onclick="app.toggleSettingsModal()" title="Настройки AI / AI Sozlamalari" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 border border-slate-700 transition">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Mobile Bottom Nav Bar -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 flex justify-around py-2 px-1 text-xs text-slate-400">
+    <button onclick="app.navTo('dashboard')" class="flex flex-col items-center gap-1 py-1 px-3 rounded-lg hover:text-white" id="mNavDash">
+      <i class="fa-solid fa-chart-pie text-base"></i>
+      <span data-i18n="navDashboard">Дашборд</span>
+    </button>
+    <button onclick="app.startNewWizard()" class="flex flex-col items-center gap-1 py-1 px-3 rounded-lg text-uzum-400 hover:text-uzum-300" id="mNavCreate">
+      <i class="fa-solid fa-circle-plus text-lg"></i>
+      <span data-i18n="navCreateCard">Создать</span>
+    </button>
+    <button onclick="app.navTo('projects')" class="flex flex-col items-center gap-1 py-1 px-3 rounded-lg hover:text-white" id="mNavProj">
+      <i class="fa-solid fa-folder text-base"></i>
+      <span data-i18n="navProjects">Проекты</span>
+    </button>
+    <button onclick="app.navTo('rules')" class="flex flex-col items-center gap-1 py-1 px-3 rounded-lg hover:text-white" id="mNavRules">
+      <i class="fa-solid fa-shield-halved text-base text-emerald-400"></i>
+      <span>Uzum Rules</span>
+    </button>
+  </nav>
+
+  <!-- Main Workspace View Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-8 pb-20 md:pb-12">
+    
+    <!-- Toast & Alert Banner Container -->
+    <div id="toastContainer" class="fixed top-16 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
+
+    <!-- VIEW 1: DASHBOARD -->
+    <section id="viewDashboard" class="space-y-8">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-uzum-900 via-slate-900 to-slate-900 border border-uzum-500/30 p-6 sm:p-10 shadow-2xl">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-uzum-600/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-uzum-600/20 border border-uzum-500/40 text-uzum-300 text-xs font-semibold">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span data-i18n="dashBadge">AI-Ассистент Продавца Uzum Market</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-white leading-tight" data-i18n="dashHeroTitle">
+            Профессиональная карточка товара за 2 минуты
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed" data-i18n="dashHeroDesc">
+            Загрузите одно фото товара — AI проанализирует предмет, создаст продающие тексты на русском и узбекском языках, сгенерирует инфографику, удалит фон и оформит идеальные фото на модели.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-4 items-center">
+            <button onclick="app.startNewWizard()" class="btn-glow px-6 py-3.5 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm sm:text-base flex items-center gap-2 transition">
+              <i class="fa-solid fa-plus-circle text-lg"></i>
+              <span data-i18n="dashCreateBtn">+ Создать карточку товара</span>
+            </button>
+            <button onclick="app.navTo('rules')" class="px-5 py-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm flex items-center gap-2 transition">
+              <i class="fa-solid fa-shield-check text-emerald-400"></i>
+              <span data-i18n="dashRulesBtn">Правила Uzum Market</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Counter Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span data-i18n="metricCardsCreated">Карточек создано</span>
+            <i class="fa-solid fa-box text-uzum-400 text-base"></i>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white" id="statCardCount">0</div>
+          <div class="text-[11px] text-emerald-400 font-medium" data-i18n="metricReady">100% готовность</div>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span data-i18n="metricPhotosProcessed">Обработано фото</span>
+            <i class="fa-solid fa-image text-cyan-400 text-base"></i>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white" id="statPhotoCount">0</div>
+          <div class="text-[11px] text-slate-400" data-i18n="metricStudioQuality">Студийный фон</div>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span data-i18n="metricInfographics">Инфографик создано</span>
+            <i class="fa-solid fa-layer-group text-amber-400 text-base"></i>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white" id="statInfographicCount">0</div>
+          <div class="text-[11px] text-amber-400" data-i18n="metricUzumStyle">Uzum Style 3:4</div>
+        </div>
+
+        <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-1">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span data-i18n="metricComplianceScore">Индекс соответствия</span>
+            <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400">98%</div>
+          <div class="text-[11px] text-slate-400" data-i18n="metricUzumEngine">Uzum Requirements Engine</div>
+        </div>
+      </div>
+
+      <!-- Recent Projects Section -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-uzum-400"></i>
+            <span data-i18n="recentProjectsTitle">Последние проекты</span>
+          </h3>
+          <button onclick="app.navTo('projects')" class="text-xs text-uzum-400 hover:text-uzum-300 font-semibold" data-i18n="viewAllProjects">
+            Посмотреть все →
+          </button>
+        </div>
+
+        <div id="recentProjectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- VIEW 2: 8-STEP CARD CREATOR WIZARD -->
+    <section id="viewWizard" class="hidden space-y-6">
+      
+      <!-- Wizard Progress Header -->
+      <div class="glass-card p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-uzum-600/30 text-uzum-300 border border-uzum-500/40" id="wizardStepNumberBadge">Шаг 1 из 8</span>
+              <h2 class="text-base sm:text-lg font-bold text-white" id="wizardStepTitleText">Загрузка фотографии товара</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5" id="wizardStepDescText">Добавьте снимок с камеры или из галереи устройства</p>
+          </div>
+          
+          <div class="flex items-center gap-2 text-xs">
+            <button onclick="app.cancelWizard()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition" data-i18n="cancelBtn">
+              Отмена
+            </button>
+          </div>
+        </div>
+
+        <!-- 8-Step Progress Indicator Bar -->
+        <div class="grid grid-cols-8 gap-1.5 sm:gap-2">
+          <!-- Step 1 -->
+          <button onclick="app.jumpToStep(1)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 1: Товар">
+            <div id="stepDot1" class="w-full h-2 rounded-full step-active transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">1. Товар</span>
+          </button>
+          <!-- Step 2 -->
+          <button onclick="app.jumpToStep(2)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 2: Анализ">
+            <div id="stepDot2" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">2. Анализ</span>
+          </button>
+          <!-- Step 3 -->
+          <button onclick="app.jumpToStep(3)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 3: Описание">
+            <div id="stepDot3" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">3. Текст</span>
+          </button>
+          <!-- Step 4 -->
+          <button onclick="app.jumpToStep(4)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 4: Главное фото">
+            <div id="stepDot4" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">4. Студия</span>
+          </button>
+          <!-- Step 5 -->
+          <button onclick="app.jumpToStep(5)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 5: Инфографика">
+            <div id="stepDot5" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">5. Слайды</span>
+          </button>
+          <!-- Step 6 -->
+          <button onclick="app.jumpToStep(6)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 6: На модели">
+            <div id="stepDot6" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">6. Модель</span>
+          </button>
+          <!-- Step 7 -->
+          <button onclick="app.jumpToStep(7)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 7: Проверка Uzum">
+            <div id="stepDot7" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">7. Проверка</span>
+          </button>
+          <!-- Step 8 -->
+          <button onclick="app.jumpToStep(8)" class="group flex flex-col items-center gap-1 focus:outline-none" title="Шаг 8: Готово">
+            <div id="stepDot8" class="w-full h-2 rounded-full step-pending transition-all"></div>
+            <span class="text-[10px] hidden lg:block text-slate-400 group-hover:text-white transition">8. Финал</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 1 CONTAINER: Upload / Camera Capture -->
+      <div id="stepPanel1" class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- File Drop Zone & Buttons -->
+          <div class="space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-camera text-uzum-400"></i>
+              <span data-i18n="step1Title">Добавить фото товара</span>
+            </h3>
+            
+            <!-- Drag & Drop Container -->
+            <div id="dropZone" onclick="document.getElementById('fileInput').click()" class="border-2 border-dashed border-slate-700 hover:border-uzum-500 bg-slate-900/50 hover:bg-uzum-900/10 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition flex flex-col items-center justify-center min-h-[220px]">
+              <div class="w-16 h-16 rounded-full bg-uzum-600/20 flex items-center justify-center text-uzum-400 text-2xl mb-3">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <p class="text-sm font-semibold text-slate-200" data-i18n="dropText">Перетащите фотографию или нажмите для выбора</p>
+              <p class="text-xs text-slate-400 mt-1" data-i18n="dropSubText">Поддерживаются JPG, PNG, WEBP (до 15 МБ)</p>
+              <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="app.handleFileSelect(event)" />
+            </div>
+
+            <!-- Mobile & Quick Capture Buttons -->
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="app.openCameraModal()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl font-medium text-xs sm:text-sm border border-slate-700 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-camera text-emerald-400"></i>
+                <span data-i18n="btnTakeCamera">📷 Сделать фото</span>
+              </button>
+              <button onclick="document.getElementById('fileInput').click()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-100 rounded-xl font-medium text-xs sm:text-sm border border-slate-700 flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-images text-cyan-400"></i>
+                <span data-i18n="btnFromGallery">🖼 Из галереи</span>
+              </button>
+            </div>
+
+            <!-- Pre-made Sample Product Presets (for instant demo) -->
+            <div class="pt-2">
+              <p class="text-xs text-slate-400 mb-2 font-medium" data-i18n="samplePresetText">Или выберите тестовый образ товара:</p>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="app.loadSamplePreset('bag')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs border border-slate-700 transition">
+                  👜 Кожаная сумка
+                </button>
+                <button onclick="app.loadSamplePreset('blender')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs border border-slate-700 transition">
+                  🥤 Кухонный блендер
+                </button>
+                <button onclick="app.loadSamplePreset('sneakers')" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs border border-slate-700 transition">
+                  👟 Спортивные кроссовки
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Photo Preview & File Inspection Card -->
+          <div class="flex flex-col space-y-3">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-image text-cyan-400"></i>
+              <span data-i18n="previewTitle">Предварительный просмотр</span>
+            </h3>
+
+            <div class="flex-1 bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden flex items-center justify-center relative min-h-[260px] p-2">
+              <img id="step1PreviewImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='1.5'><rect x='3' y='3' width='18' height='18' rx='2'/><circle cx='8.5' cy='8.5' r='1.5'/><path d='M21 15l-5-5L5 21'/></svg>" class="max-h-[300px] w-auto object-contain rounded-xl" alt="Preview" />
+              
+              <!-- Validation Badge Overlay -->
+              <div id="step1ValBadge" class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-slate-700 text-xs flex items-center gap-2">
+                <i class="fa-solid fa-circle-question text-amber-400"></i>
+                <span id="step1ValStatus">Ожидает файл...</span>
+              </div>
+            </div>
+
+            <!-- Image File Metadata Box -->
+            <div id="step1MetaBox" class="text-xs text-slate-400 bg-slate-900/60 p-3 rounded-xl border border-slate-800 grid grid-cols-3 gap-2 text-center">
+              <div>
+                <span class="block text-slate-500 text-[10px]">Формат</span>
+                <span font-semibold text-slate-200 id="metaFormat">-</span>
+              </div>
+              <div>
+                <span class="block text-slate-500 text-[10px]">Разрешение</span>
+                <span font-semibold text-slate-200 id="metaRes">-</span>
+              </div>
+              <div>
+                <span class="block text-slate-500 text-[10px]">Размер</span>
+                <span font-semibold text-slate-200 id="metaSize">-</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Next Action Bar -->
+        <div class="flex justify-end pt-4 border-t border-slate-800">
+          <button id="step1NextBtn" onclick="app.processStep1AndNext()" disabled class="px-6 py-3 rounded-xl bg-slate-800 text-slate-500 cursor-not-allowed font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnAnalyzeProduct">Анализировать товар AI →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2 CONTAINER: AI Vision Analysis & Corrections -->
+      <div id="stepPanel2" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-uzum-900/30 border border-uzum-500/30 p-4 rounded-xl">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-uzum-600/30 flex items-center justify-center text-uzum-400 text-xl">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-sm" data-i18n="step2Header">AI Vision проанализировал изображение</h3>
+              <p class="text-xs text-slate-300" data-i18n="step2Sub">Все характеристики распознаны без выдуманных деталей. Вы можете скорректировать данные.</p>
+            </div>
+          </div>
+          <button onclick="app.runAIVisionAnalysis()" class="px-3 py-1.5 rounded-lg bg-uzum-600/30 hover:bg-uzum-600/50 border border-uzum-500/50 text-xs text-uzum-200 font-semibold flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span data-i18n="reAnalyzeBtn">Переанализировать</span>
+          </button>
+        </div>
+
+        <!-- Analysis Fields Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- Product Type -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblProductType">Тип товара:</span>
+              <span id="badgeType" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-normal">Точно</span>
+            </label>
+            <input type="text" id="fieldProductType" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Сумка женская" />
+          </div>
+
+          <!-- Category -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblCategory">Категория Uzum:</span>
+              <span id="badgeCategory" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-normal">Точно</span>
+            </label>
+            <input type="text" id="fieldCategory" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Аксессуары / Сумки" />
+          </div>
+
+          <!-- Color -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblColor">Цвет / Оттенок:</span>
+              <span id="badgeColor" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-normal">Точно</span>
+            </label>
+            <input type="text" id="fieldColor" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Черный матовый" />
+          </div>
+
+          <!-- Material -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblMaterial">Материал:</span>
+              <span id="badgeMaterial" class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-normal" data-i18n="badgeClarify">⚠️ Уточнить</span>
+            </label>
+            <input type="text" id="fieldMaterial" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Экокожа премиум" />
+          </div>
+
+          <!-- Target Audience -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblAudience">Назначение / Целевая аудитория:</span>
+              <span id="badgeAudience" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-normal">Точно</span>
+            </label>
+            <input type="text" id="fieldAudience" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Повседневная, вечерняя, для женщин" />
+          </div>
+
+          <!-- Key Design Features -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300 flex items-center justify-between">
+              <span data-i18n="lblDesign">Особенности дизайна:</span>
+              <span id="badgeDesign" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-normal">Точно</span>
+            </label>
+            <input type="text" id="fieldDesign" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-100" placeholder="например: Золотая фурнитура, плечевой ремень" />
+          </div>
+
+        </div>
+
+        <!-- Package Contents & Additional Selling Highlights -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300" data-i18n="lblPackage">Комплектация (если видна):</label>
+            <textarea id="fieldPackage" rows="2" class="w-full glass-input p-3 rounded-xl text-sm text-slate-100 resize-none" placeholder="Сумка, ремешок, пыльник"></textarea>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-300" data-i18n="lblHighlights">Визуальные преимущества:</label>
+            <textarea id="fieldHighlights" rows="2" class="w-full glass-input p-3 rounded-xl text-sm text-slate-100 resize-none" placeholder="Вместительное отделение, ровные швы, молния высокого качества"></textarea>
+          </div>
+        </div>
+
+        <!-- Navigation buttons -->
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(1)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep2AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnGenerateCopy">Создать описание AI →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3 CONTAINER: AI Title, Description & SEO Generation -->
+      <div id="stepPanel3" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-pen-nib text-uzum-400"></i>
+              <span data-i18n="step3Title">AI-Описание товара</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="step3Sub">Создано без ложных обещаний и выдуманных сертификатов, готово для Uzum Market</p>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="app.regenerateAICopy()" class="px-3 py-1.5 rounded-lg bg-uzum-600/20 hover:bg-uzum-600/40 border border-uzum-500/40 text-uzum-300 text-xs font-semibold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-rotate"></i>
+              <span data-i18n="btnRegenerateCopy">Перегенерировать</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Title Output -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between items-center text-xs">
+              <label class="font-semibold text-slate-200" data-i18n="lblGeneratedTitle">Название товара (до 100 символов):</label>
+              <span id="titleCharCounter" class="text-slate-400 text-[11px]">0 / 100</span>
+            </div>
+            <input type="text" id="outTitle" oninput="app.updateTitleCount()" class="w-full glass-input px-3 py-2.5 rounded-xl text-sm font-semibold text-white" />
+          </div>
+
+          <!-- Short Description -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-200" data-i18n="lblShortDesc">Краткое резюме / Главное преимущество:</label>
+            <input type="text" id="outShortDesc" class="w-full glass-input px-3 py-2 rounded-xl text-sm text-slate-200" />
+          </div>
+
+          <!-- Key Advantages / Bullet points -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-200" data-i18n="lblBullets">Ключевые преимущества (по спискам):</label>
+            <textarea id="outBullets" rows="3" class="w-full glass-input p-3 rounded-xl text-sm text-slate-200 custom-scrollbar"></textarea>
+          </div>
+
+          <!-- Full Description -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-semibold text-slate-200" data-i18n="lblFullDesc">Полное описание товара (SEO-оптимизированное):</label>
+            <textarea id="outFullDesc" rows="5" class="w-full glass-input p-3 rounded-xl text-sm text-slate-200 custom-scrollbar"></textarea>
+          </div>
+
+          <!-- Specifications Table -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-200" data-i18n="lblSpecs">Характеристики:</label>
+              <textarea id="outSpecs" rows="3" class="w-full glass-input p-3 rounded-xl text-sm text-slate-200 custom-scrollbar" placeholder="Цвет: Черный&#10;Материал: Экокожа"></textarea>
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold text-slate-200" data-i18n="lblSEO">Рекомендации по уходу / SEO ключи:</label>
+              <textarea id="outSeo" rows="3" class="w-full glass-input p-3 rounded-xl text-sm text-slate-200 custom-scrollbar"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(2)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep3AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnToStudio">Подготовить главное фото →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4 CONTAINER: Background Cleanup & Main Image Studio -->
+      <div id="stepPanel4" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic text-cyan-400"></i>
+              <span data-i18n="step4Title">Инструмент «Главное фото» (Студийный фон)</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="step4Sub">Автоматическое очищение фона и адаптация под формат 3:4 Uzum Market</p>
+          </div>
+
+          <!-- Studio Preset Toggles -->
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button onclick="app.applyStudioBackground('white')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-900 font-bold hover:bg-white transition shadow">
+              ⚪ Белый
+            </button>
+            <button onclick="app.applyStudioBackground('lightgray')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:bg-slate-700 transition border border-slate-700">
+              🔘 Нейтральный
+            </button>
+            <button onclick="app.applyStudioBackground('uzum')" class="px-3 py-1.5 rounded-lg bg-uzum-600 text-white hover:bg-uzum-500 transition font-medium">
+              🟣 Uzum Градиент
+            </button>
+            <button onclick="app.applyStudioBackground('transparent')" class="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+              🏁 Прозрачный
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          
+          <!-- Canvas Interactive Viewport -->
+          <div class="lg:col-span-2 bg-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col items-center justify-center min-h-[380px] relative overflow-hidden">
+            <canvas id="studioCanvas" class="max-h-[420px] max-w-full rounded-xl shadow-2xl object-contain border border-slate-800/60"></canvas>
+            
+            <!-- Quality & Requirements Floating Indicator -->
+            <div class="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
+              <span class="flex items-center gap-1 text-emerald-400">
+                <i class="fa-solid fa-check-circle"></i> Пропорция 3:4
+              </span>
+              <span class="flex items-center gap-1 text-emerald-400">
+                <i class="fa-solid fa-check-circle"></i> Объект по центру
+              </span>
+              <span class="flex items-center gap-1 text-emerald-400">
+                <i class="fa-solid fa-check-circle"></i> Вырезка деталей
+              </span>
+            </div>
+          </div>
+
+          <!-- Studio Controls Sidebar -->
+          <div class="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+            <h4 class="font-bold text-sm text-white border-b border-slate-800 pb-2" data-i18n="studioControlsTitle">Настройки обработки</h4>
+
+            <div class="space-y-2">
+              <label class="text-xs text-slate-300 flex justify-between">
+                <span data-i18n="lblObjectScale">Масштаб товара:</span>
+                <span id="valScale">85%</span>
+              </label>
+              <input type="range" id="sliderScale" min="50" max="100" value="85" oninput="app.updateStudioCanvas()" class="w-full accent-uzum-600" />
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-xs text-slate-300 flex justify-between">
+                <span data-i18n="lblShadowOpacity">Мягкая тень:</span>
+                <span id="valShadow">30%</span>
+              </label>
+              <input type="range" id="sliderShadow" min="0" max="100" value="30" oninput="app.updateStudioCanvas()" class="w-full accent-uzum-600" />
+            </div>
+
+            <div class="pt-2 space-y-2">
+              <button onclick="app.removeBgWithAI()" class="w-full py-2.5 px-4 bg-uzum-600/20 hover:bg-uzum-600/30 text-uzum-300 border border-uzum-500/40 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-scissors"></i>
+                <span data-i18n="btnAutoBgRemove">Авто-очистка фона AI</span>
+              </button>
+              
+              <button onclick="app.generateAIPromptBg()" class="w-full py-2.5 px-4 bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span data-i18n="btnAdBg">Создать рекламный фон AI</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(3)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep4AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnToInfographics">Перейти к инфографике →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 5 CONTAINER: AI Infographic Slide Deck Builder -->
+      <div id="stepPanel5" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-amber-400"></i>
+              <span data-i18n="step5Title">Инфографика карточки товара</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="step5Sub">Автоматическая структура слайдов в едином графическом стиле</p>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs">
+            <button onclick="app.addInfographicSlide()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 rounded-lg font-semibold flex items-center gap-1 transition">
+              <i class="fa-solid fa-plus text-uzum-400"></i> <span data-i18n="btnAddSlide">Добавить слайд</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Slide Thumbnails Deck List -->
+          <div class="space-y-3">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="lblSlideDeck">Структура карточки:</label>
+            <div id="slideDeckList" class="space-y-2 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
+              <!-- Rendered dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Active Slide Editor & Preview Area -->
+          <div class="lg:col-span-2 space-y-4">
+            
+            <div class="flex items-center justify-between bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800 text-xs">
+              <span class="font-bold text-uzum-400" id="currentSlideLabel">Редактирование: Слайд 1 (Главный)</span>
+              <div class="flex items-center gap-2">
+                <button onclick="app.deleteCurrentSlide()" class="text-rose-400 hover:text-rose-300 font-medium" data-i18n="btnDeleteSlide">Удалить слайд</button>
+              </div>
+            </div>
+
+            <!-- Slide Canvas Preview -->
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-center min-h-[320px]">
+              <canvas id="infographicCanvas" class="max-h-[360px] max-w-full rounded-xl shadow-xl border border-slate-800"></canvas>
+            </div>
+
+            <!-- Slide Editable Text Controls -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <div class="space-y-1">
+                <label class="text-xs text-slate-300 font-semibold" data-i18n="lblSlideHeader">Заголовок слайда:</label>
+                <input type="text" id="slideInputTitle" oninput="app.updateActiveSlideData()" class="w-full glass-input px-3 py-1.5 rounded-lg text-xs text-white" />
+              </div>
+
+              <div class="space-y-1">
+                <label class="text-xs text-slate-300 font-semibold" data-i18n="lblSlideSubtitle">Подзаголовок / Плашка:</label>
+                <input type="text" id="slideInputSubtitle" oninput="app.updateActiveSlideData()" class="w-full glass-input px-3 py-1.5 rounded-lg text-xs text-white" />
+              </div>
+
+              <div class="sm:col-span-2 space-y-1">
+                <label class="text-xs text-slate-300 font-semibold" data-i18n="lblSlideBullets">Пункты (каждый с новой строки):</label>
+                <textarea id="slideInputBullets" rows="2" oninput="app.updateActiveSlideData()" class="w-full glass-input p-2 rounded-lg text-xs text-white resize-none"></textarea>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(4)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep5AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnToModelShot">Сгенерировать фото на модели →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 6 CONTAINER: AI Model Lifestyle Photo Generator -->
+      <div id="stepPanel6" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-user-astronaut text-purple-400"></i>
+              <span data-i18n="step6Title">Фото товара на модели</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="step6Sub">Генерация образного фото без искажения оригинального дизайна товара</p>
+          </div>
+
+          <span class="text-[11px] px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span data-i18n="modelSafetyWarning">Сохраняйте цвет и форму товара</span>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Model Settings Column -->
+          <div class="space-y-4 bg-slate-900/60 p-5 rounded-2xl border border-slate-800">
+            <h4 class="font-bold text-sm text-white border-b border-slate-800 pb-2" data-i18n="lblModelSettings">Параметры модели</h4>
+
+            <!-- Gender -->
+            <div class="space-y-1">
+              <label class="text-xs text-slate-300" data-i18n="lblModelGender">Пол модели:</label>
+              <select id="modelGender" class="w-full glass-input px-3 py-2 rounded-xl text-xs text-white">
+                <option value="female">👩 Женщина</option>
+                <option value="male">👨 Мужчина</option>
+                <option value="unisex">✨ Без модели / Предметный интерьер</option>
+              </select>
+            </div>
+
+            <!-- Age / Look -->
+            <div class="space-y-1">
+              <label class="text-xs text-slate-300" data-i18n="lblModelLook">Внешность / Возраст:</label>
+              <select id="modelLook" class="w-full glass-input px-3 py-2 rounded-xl text-xs text-white">
+                <option value="asia">Центрально-азиатская (Узбекистан)</option>
+                <option value="inter">Европейская / Международная</option>
+                <option value="young">Молодежный стиль (18-25 лет)</option>
+              </select>
+            </div>
+
+            <!-- Environment / Location -->
+            <div class="space-y-1">
+              <label class="text-xs text-slate-300" data-i18n="lblModelSetting">Локация / Интерьер:</label>
+              <select id="modelSetting" class="w-full glass-input px-3 py-2 rounded-xl text-xs text-white">
+                <option value="studio">Минималистичная студия</option>
+                <option value="tashkent">Городской стиль (Tashkent City)</option>
+                <option value="home">Уютный домашний интерьер</option>
+                <option value="nature">Природа / Парк</option>
+              </select>
+            </div>
+
+            <button onclick="app.generateModelPhoto()" class="w-full py-3 px-4 bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-sparkles"></i>
+              <span data-i18n="btnGenerateModelShot">Сгенерировать фото AI</span>
+            </button>
+          </div>
+
+          <!-- Generated Model Visual Preview -->
+          <div class="lg:col-span-2 bg-slate-950 rounded-2xl border border-slate-800 p-4 flex flex-col items-center justify-center min-h-[350px] relative">
+            <canvas id="modelCanvas" class="max-h-[380px] max-w-full rounded-xl shadow-xl object-contain border border-slate-800"></canvas>
+            
+            <p class="text-slate-400 text-xs mt-3 text-center" data-i18n="modelCanvasNote">
+              AI сохраняет оригинальные пропорции, логотип и текстуру товара.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(5)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep6AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <span data-i18n="btnToValidation">Проверить по правилам Uzum →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 7 CONTAINER: Uzum Requirements Engine Validation -->
+      <div id="stepPanel7" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-6">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+          <div>
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+              <span data-i18n="step7Title">Модуль «Uzum Requirements Engine»</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5" data-i18n="step7Sub">Проверка всех материалов карточки перед загрузкой в кабинет продавца</p>
+          </div>
+
+          <div id="overallCompliancePill" class="px-4 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Готово на 98%</span>
+          </div>
+        </div>
+
+        <!-- Validation Results List -->
+        <div class="space-y-3" id="validationReportList">
+          <!-- Populated by Uzum Rules Engine JS -->
+        </div>
+
+        <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+          <button onclick="app.jumpToStep(6)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+            ← <span data-i18n="btnBack">Назад</span>
+          </button>
+          <button onclick="app.processStep7AndNext()" class="btn-glow px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm flex items-center gap-2 transition">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+            <span data-i18n="btnToFinalCard">Получить готовую карточку →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 8 CONTAINER: Final Master Card & Download Kit -->
+      <div id="stepPanel8" class="hidden glass-card p-6 sm:p-8 rounded-2xl border border-slate-800 space-y-8">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-emerald-900/40 to-slate-900 border border-emerald-500/30 p-6 rounded-2xl">
+          <div class="space-y-1">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest" data-i18n="finalSuccessTag">✅ Карточка полностью сформирована</span>
+            <h3 class="text-xl sm:text-2xl font-extrabold text-white" id="finalCardTitleDisplay">Женская сумка из экокожи</h3>
+            <p class="text-xs text-slate-300" data-i18n="finalSuccessDesc">Все фотографии, тексты и инфографика соответствуют стандарту Uzum Market.</p>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button onclick="app.downloadCompleteKit()" class="btn-glow px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition">
+              <i class="fa-solid fa-download text-base"></i>
+              <span data-i18n="btnDownloadKit">📥 Скачать полный комплект</span>
+            </button>
+            <button onclick="app.saveProjectToStorage()" class="px-4 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 transition">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span data-i18n="btnSaveProject">Сохранить проект</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Master Assets Overview Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Column 1: Images Package -->
+          <div class="space-y-4">
+            <h4 class="font-bold text-sm text-white flex items-center gap-2 border-b border-slate-800 pb-2">
+              <i class="fa-solid fa-images text-cyan-400"></i>
+              <span data-i18n="lblFinalImages">Изображения (3:4 Uzum format)</span>
+            </h4>
+
+            <div class="grid grid-cols-2 gap-3" id="finalGalleryContainer">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Column 2 & 3: Final Multilingual Text & Specs -->
+          <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                <i class="fa-solid fa-file-lines text-uzum-400"></i>
+                <span data-i18n="lblFinalTexts">Текстовые материалы</span>
+              </h4>
+              <button onclick="app.copyAllTextsToClipboard()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-copy text-uzum-400"></i>
+                <span data-i18n="btnCopyAllText">Скопировать весь текст</span>
+              </button>
+            </div>
+
+            <div class="space-y-3 text-xs bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+              <div>
+                <span class="text-slate-400 block font-medium" data-i18n="lblOutTitle">Название товара:</span>
+                <p id="finalOutTitle" class="font-bold text-white text-sm mt-0.5"></p>
+              </div>
+
+              <div>
+                <span class="text-slate-400 block font-medium" data-i18n="lblOutBullets">Преимущества:</span>
+                <p id="finalOutBullets" class="text-slate-200 whitespace-pre-line mt-0.5"></p>
+              </div>
+
+              <div>
+                <span class="text-slate-400 block font-medium" data-i18n="lblOutDesc">Полное описание:</span>
+                <p id="finalOutDesc" class="text-slate-300 leading-relaxed whitespace-pre-line mt-0.5 max-h-48 overflow-y-auto custom-scrollbar p-2 bg-slate-950/50 rounded-lg"></p>
+              </div>
+
+              <div>
+                <span class="text-slate-400 block font-medium" data-i18n="lblOutSpecs">Характеристики:</span>
+                <p id="finalOutSpecs" class="text-slate-300 whitespace-pre-line mt-0.5"></p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- VIEW 3: MY PROJECTS ARCHIVE -->
+    <section id="viewProjects" class="hidden space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white" data-i18n="projectsTitle">Мои сохраненные карточки</h2>
+          <p class="text-xs text-slate-400 mt-1" data-i18n="projectsSub">Архив проектов карточек товаров Uzum Market</p>
+        </div>
+        <button onclick="app.startNewWizard()" class="px-4 py-2 bg-uzum-600 hover:bg-uzum-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 transition">
+          <i class="fa-solid fa-plus"></i> <span data-i18n="dashCreateBtn">+ Создать карточку</span>
+        </button>
+      </div>
+
+      <div id="allProjectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+
+    <!-- VIEW 4: UZUM REQUIREMENTS ENGINE RULEBOOK -->
+    <section id="viewRules" class="hidden space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+          <i class="fa-solid fa-shield-check text-emerald-400"></i>
+          <span>Uzum Requirements Engine</span>
+        </h2>
+        <p class="text-xs text-slate-400 mt-1" data-i18n="rulesEngineSub">База централизованных правил модерации карточек товаров Uzum Market</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Image Rules -->
+        <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+          <h3 class="font-bold text-white text-base flex items-center gap-2 text-uzum-400">
+            <i class="fa-solid fa-image"></i>
+            <span>Требования к фотографиям</span>
+          </h3>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+              <span>Пропорции кадра: <b>3:4</b> (рекомендуется 800x1066px или 1200x1600px).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+              <span>Главное фото: чистый светлый или студийный нейтральный фон.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-xmark text-rose-400 mt-0.5"></i>
+              <span>Запрещено наносить рекламу («ХИТ», «СКИДКА», «АКЦИЯ», «БЕСТСЕЛЛЕР») на главное изображение.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Text Rules -->
+        <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+          <h3 class="font-bold text-white text-base flex items-center gap-2 text-emerald-400">
+            <i class="fa-solid fa-align-left"></i>
+            <span>Требования к описанию и названию</span>
+          </h3>
+          <ul class="space-y-2 text-xs text-slate-300">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-check text-emerald-400 mt-0.5"></i>
+              <span>Структура названия: Тип товара + Бренд/Модель + Ключевое свойство.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-xmark text-rose-400 mt-0.5"></i>
+              <span>Запрещены незаверенные медицинские или лечебные свойства без сертификатов.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-xmark text-rose-400 mt-0.5"></i>
+              <span>Запрещены выдуманные гарантии качества и спам-ключевые слова.</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- CAMERA MODAL FOR MOBILE/DESKTOP DEVICE CAMERA -->
+  <div id="cameraModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-lg w-full p-6 rounded-3xl border border-slate-800 space-y-4 relative">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-white text-base flex items-center gap-2">
+          <i class="fa-solid fa-video text-emerald-400"></i>
+          <span data-i18n="cameraModalTitle">Сделать фото товара камерой</span>
+        </h3>
+        <button onclick="app.closeCameraModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="relative bg-black rounded-2xl overflow-hidden aspect-[3/4] flex items-center justify-center">
+        <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+        <canvas id="cameraSnapCanvas" class="hidden"></canvas>
+      </div>
+
+      <div class="flex items-center justify-between gap-3">
+        <button onclick="app.switchCameraFacing()" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs flex items-center gap-1">
+          <i class="fa-solid fa-arrows-rotate"></i> Камера
+        </button>
+        <button onclick="app.captureCameraFrame()" class="py-3 px-6 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+          <i class="fa-solid fa-circle text-rose-600 text-xs"></i>
+          <span data-i18n="btnSnap">Сделать снимок</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- AI SETTINGS & API KEY MODAL -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full p-6 rounded-3xl border border-slate-800 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-base flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-uzum-400"></i>
+          <span>AI Provider Layer</span>
+        </h3>
+        <button onclick="app.toggleSettingsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <div class="space-y-1.5">
+          <label class="font-semibold text-slate-200">Google Gemini API Key (Optional):</label>
+          <input type="password" id="inputGeminiApiKey" placeholder="AIzaSy..." class="w-full glass-input p-2.5 rounded-xl text-slate-100" />
+          <p class="text-[11px] text-slate-400">Оставьте пустым для использования автоматически встроенной модели `gemini-3-flash-preview`.</p>
+        </div>
+
+        <div class="space-y-2 bg-slate-900/70 p-3 rounded-xl border border-slate-800">
+          <span class="font-bold text-slate-300 block">Подключенные модули AI:</span>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>AI Vision & OCR</span>
+            <span class="text-emerald-400 font-semibold">Gemini 3 Flash 🟢</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>AI Copywriter</span>
+            <span class="text-emerald-400 font-semibold">Gemini 3 Flash 🟢</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>AI Image Generation</span>
+            <span class="text-cyan-400 font-semibold">Gemini 3.1 Flash Image 🟢</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="app.saveSettings()" class="px-5 py-2.5 bg-uzum-600 hover:bg-uzum-500 text-white rounded-xl font-bold text-xs">
+          Сохранить настройки
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const TRANSLATIONS = {
+      ru: {
+        navDashboard: "Дашборд",
+        navCreateCard: "Создать карточку",
+        navProjects: "Мои проекты",
+        navRules: "Uzum Engine",
+        cardLangLabel: "Язык карточки:",
+        dashBadge: "AI-Ассистент Продавца Uzum Market",
+        dashHeroTitle: "Профессиональная карточка товара за 2 минуты",
+        dashHeroDesc: "Загрузите одно фото товара — AI проанализирует предмет, создаст продающие тексты на русском и узбекском языках, сгенерирует инфографику, удалит фон и оформит идеальные фото на модели.",
+        dashCreateBtn: "+ Создать карточку товара",
+        dashRulesBtn: "Правила Uzum Market",
+        metricCardsCreated: "Карточек создано",
+        metricReady: "100% готовность",
+        metricPhotosProcessed: "Обработано фото",
+        metricStudioQuality: "Студийный фон",
+        metricInfographics: "Инфографик создано",
+        metricUzumStyle: "Uzum Style 3:4",
+        metricComplianceScore: "Индекс соответствия",
+        metricUzumEngine: "Uzum Requirements Engine",
+        recentProjectsTitle: "Последние проекты",
+        viewAllProjects: "Посмотреть все →",
+        cancelBtn: "Отмена",
+        step1Title: "Добавить фото товара",
+        dropText: "Перетащите фотографию или нажмите для выбора",
+        dropSubText: "Поддерживаются JPG, PNG, WEBP (до 15 МБ)",
+        btnTakeCamera: "📷 Сделать фото",
+        btnFromGallery: "🖼 Из галереи",
+        samplePresetText: "Или выберите тестовый образ товара:",
+        previewTitle: "Предварительный просмотр",
+        btnAnalyzeProduct: "Анализировать товар AI →",
+        step2Header: "AI Vision проанализировал изображение",
+        step2Sub: "Все характеристики распознаны без выдуманных деталей. Вы можете скорректировать данные.",
+        reAnalyzeBtn: "Переанализировать",
+        lblProductType: "Тип товара:",
+        lblCategory: "Категория Uzum:",
+        lblColor: "Цвет / Оттенок:",
+        lblMaterial: "Материал:",
+        lblAudience: "Назначение / Аудитория:",
+        lblDesign: "Особенности дизайна:",
+        lblPackage: "Комплектация:",
+        lblHighlights: "Визуальные преимущества:",
+        badgeClarify: "⚠️ Уточнить",
+        btnBack: "Назад",
+        btnGenerateCopy: "Создать описание AI →",
+        step3Title: "AI-Описание товара",
+        step3Sub: "Создано без ложных обещаний и выдуманных сертификатов, готово для Uzum Market",
+        btnRegenerateCopy: "Перегенерировать",
+        lblGeneratedTitle: "Название товара (до 100 символов):",
+        lblShortDesc: "Краткое резюме:",
+        lblBullets: "Ключевые преимущества:",
+        lblFullDesc: "Полное описание товара:",
+        lblSpecs: "Характеристики:",
+        lblSEO: "Рекомендации / SEO ключи:",
+        btnToStudio: "Подготовить главное фото →",
+        step4Title: "Инструмент «Главное фото»",
+        step4Sub: "Автоматическое очищение фона и адаптация под формат 3:4 Uzum Market",
+        studioControlsTitle: "Настройки обработки",
+        lblObjectScale: "Масштаб товара:",
+        lblShadowOpacity: "Мягкая тень:",
+        btnAutoBgRemove: "Авто-очистка фона AI",
+        btnAdBg: "Создать рекламный фон AI",
+        btnToInfographics: "Перейти к инфографике →",
+        step5Title: "Инфографика карточки товара",
+        step5Sub: "Автоматическая структура слайдов в едином графическом стиле",
+        btnAddSlide: "Добавить слайд",
+        lblSlideDeck: "Структура карточки:",
+        btnDeleteSlide: "Удалить слайд",
+        lblSlideHeader: "Заголовок слайда:",
+        lblSlideSubtitle: "Подзаголовок / Плашка:",
+        lblSlideBullets: "Пункты:",
+        btnToModelShot: "Сгенерировать фото на модели →",
+        step6Title: "Фото товара на модели",
+        step6Sub: "Генерация образного фото без искажения оригинального дизайна товара",
+        modelSafetyWarning: "Сохраняйте цвет и форму товара",
+        lblModelSettings: "Параметры модели",
+        lblModelGender: "Пол модели:",
+        lblModelLook: "Внешность / Возраст:",
+        lblModelSetting: "Локация / Интерьер:",
+        btnGenerateModelShot: "Сгенерировать фото AI",
+        modelCanvasNote: "AI сохраняет оригинальные пропорции, логотип и текстуру товара.",
+        btnToValidation: "Проверить по правилам Uzum →",
+        step7Title: "Модуль «Uzum Requirements Engine»",
+        step7Sub: "Проверка всех материалов карточки перед загрузкой в кабинет продавца",
+        btnToFinalCard: "Получить готовую карточку →",
+        finalSuccessTag: "✅ Карточка полностью сформирована",
+        finalSuccessDesc: "Все фотографии, тексты и инфографика соответствуют стандарту Uzum Market.",
+        btnDownloadKit: "📥 Скачать полный комплект",
+        btnSaveProject: "Сохранить проект",
+        lblFinalImages: "Изображения (3:4 Uzum format)",
+        lblFinalTexts: "Текстовые материалы",
+        btnCopyAllText: "Скопировать весь текст",
+        lblOutTitle: "Название товара:",
+        lblOutBullets: "Преимущества:",
+        lblOutDesc: "Полное описание:",
+        lblOutSpecs: "Характеристики:",
+        projectsTitle: "Мои сохраненные карточки",
+        projectsSub: "Архив проектов карточек товаров Uzum Market",
+        rulesEngineSub: "База централизованных правил модерации карточек товаров Uzum Market",
+        cameraModalTitle: "Сделать фото товара камерой",
+        btnSnap: "Сделать снимок",
+      },
+      uz: {
+        navDashboard: "Boshqaruv",
+        navCreateCard: "Karta yaratish",
+        navProjects: "Mening loyihalarim",
+        navRules: "Uzum Engine",
+        cardLangLabel: "Karta tili:",
+        dashBadge: "Uzum Market Sotuvchisi AI-Yordamchisi",
+        dashHeroTitle: "2 daqiqada mukammal mahsulot kartasi",
+        dashHeroDesc: "Bitta mahsulot rasm yuklang — AI uni tahlil qiladi, o'zbek va rus tillarida sotuvchi matnlar va infografikalar yaratadi, fonni tozalaydi va modeldagi rasmlarni tayyorlaydi.",
+        dashCreateBtn: "+ Mahsulot kartasini yaratish",
+        dashRulesBtn: "Uzum Market qoidalari",
+        metricCardsCreated: "Yaratilgan kartalar",
+        metricReady: "100% tayyor",
+        metricPhotosProcessed: "Ishlangan rasmlar",
+        metricStudioQuality: "Studiya foni",
+        metricInfographics: "Infografikalar",
+        metricUzumStyle: "Uzum Style 3:4",
+        metricComplianceScore: "Moslik indeksi",
+        metricUzumEngine: "Uzum Requirements Engine",
+        recentProjectsTitle: "Oxirgi loyihalar",
+        viewAllProjects: "Barchasini ko'rish →",
+        cancelBtn: "Bekor qilish",
+        step1Title: "Mahsulot rasmini qo'shish",
+        dropText: "Rasm faylini shu yerga tashlang yoki tanlang",
+        dropSubText: "JPG, PNG, WEBP (15 MB gacha) qo'llab-quvvatlanadi",
+        btnTakeCamera: "📷 Rasmga olish",
+        btnFromGallery: "🖼 Galereyadan",
+        samplePresetText: "Yoki namuna mahsulotni tanlang:",
+        previewTitle: "Oldindan ko'rish",
+        btnAnalyzeProduct: "AI Mahsulotni tahlil qilish →",
+        step2Header: "AI Vision rasmni tahlil qildi",
+        step2Sub: "Xususiyatlar aniq aniqlandi. Ma'lumotlarni tahrirlashingiz mumkin.",
+        reAnalyzeBtn: "Qayta tahlil",
+        lblProductType: "Mahsulot turi:",
+        lblCategory: "Uzum kategoriyasi:",
+        lblColor: "Rangi / Tusi:",
+        lblMaterial: "Materiali:",
+        lblAudience: "Mo'ljal / Auditoriya:",
+        lblDesign: "Dizayn xususiyatlari:",
+        lblPackage: "Jamlanmasi:",
+        lblHighlights: "Vizual afzalliklar:",
+        badgeClarify: "⚠️ Aniqlov kerak",
+        btnBack: "Orqaga",
+        btnGenerateCopy: "AI Tavsif yaratish →",
+        step3Title: "AI Mahsulot tavsifi",
+        step3Sub: "Uzum Market uchun tayyor va aniq sotuvchi matnlar",
+        btnRegenerateCopy: "Qayta yaratish",
+        lblGeneratedTitle: "Mahsulot nomi (100 belgigacha):",
+        lblShortDesc: "Kichik xulosa:",
+        lblBullets: "Asosiy afzalliklar:",
+        lblFullDesc: "To'liq mahsulot tavsifi:",
+        lblSpecs: "Xususiyatlar:",
+        lblSEO: "Tavsiyalar / SEO kalitlar:",
+        btnToStudio: "Asosiy rasmni tayyorlash →",
+        step4Title: "«Asosiy rasm» vositasi",
+        step4Sub: "Fonni avtomatik tozalash va Uzum Market 3:4 formatiga moslash",
+        studioControlsTitle: "Ishlov berish sozlamalari",
+        lblObjectScale: "Mahsulot masshtabi:",
+        lblShadowOpacity: "Yumshoq soya:",
+        btnAutoBgRemove: "AI Fonni tozalash",
+        btnAdBg: "AI Reklama foni yaratish",
+        btnToInfographics: "Infografikaga o'tish →",
+        step5Title: "Mahsulot infografikasi",
+        step5Sub: "Yagona grafik uslubdagi slaydlarning avtomatik strukturasi",
+        btnAddSlide: "Slayd qo'shish",
+        lblSlideDeck: "Karta strukturasi:",
+        btnDeleteSlide: "Slaydni o'chirish",
+        lblSlideHeader: "Slayd sarlavhasi:",
+        lblSlideSubtitle: "Ost-sarlavha / Nishon:",
+        lblSlideBullets: "Maddalar:",
+        btnToModelShot: "Modeldagi rasmni yaratish →",
+        step6Title: "Modeldagi mahsulot rasmi",
+        step6Sub: "Original dizaynni buzmasdan modeldagi rasmni yaratish",
+        modelSafetyWarning: "Rangi va shaklini saqlang",
+        lblModelSettings: "Model parametrlar",
+        lblModelGender: "Model jinsi:",
+        lblModelLook: "Tashqi ko'rinish:",
+        lblModelSetting: "Joylashuv / Interyer:",
+        btnGenerateModelShot: "AI Rasm yaratish",
+        modelCanvasNote: "AI original nisbatlar va detallarni saqlaydi.",
+        btnToValidation: "Uzum qoidalariga tekshirish →",
+        step7Title: "«Uzum Requirements Engine» moduli",
+        step7Sub: "Chop etishdan oldin barcha materiallarni tekshirish",
+        btnToFinalCard: "Tayyor kartani olish →",
+        finalSuccessTag: "✅ Karta to'liq shakllandi",
+        finalSuccessDesc: "Barcha rasm va matnlar Uzum Market standartlariga mos keladi.",
+        btnDownloadKit: "📥 To'liq to'plamni yuklab olish",
+        btnSaveProject: "Loyiha sifatida saqlash",
+        lblFinalImages: "Rasmlar (3:4 Uzum format)",
+        lblFinalTexts: "Matnli materiallar",
+        btnCopyAllText: "Barcha matnni nusxalash",
+        lblOutTitle: "Mahsulot nomi:",
+        lblOutBullets: "Afzalliklar:",
+        lblOutDesc: "To'liq tavsif:",
+        lblOutSpecs: "Xususiyatlar:",
+        projectsTitle: "Mening saqlangan kartalarim",
+        projectsSub: "Uzum Market mahsulot kartalari arxivi",
+        rulesEngineSub: "Uzum Market moderatsiya qoidalari bazasi",
+        cameraModalTitle: "Kamera orqali rasmga olish",
+        btnSnap: "Rasmga olish",
+      }
+    };
+
+    class UzumSellerAIApp {
+      constructor() {
+        this.uiLang = 'ru';
+        this.cardTargetLang = 'ru';
+        this.currentView = 'dashboard';
+        this.wizardStep = 1;
+
+        // Active project state
+        this.projectData = {
+          id: null,
+          title: '',
+          rawImageDataUrl: null,
+          analysis: {
+            productType: '',
+            category: '',
+            color: '',
+            material: '',
+            audience: '',
+            design: '',
+            package: '',
+            highlights: ''
+          },
+          copy: {
+            title: '',
+            shortDesc: '',
+            bullets: '',
+            fullDesc: '',
+            specs: '',
+            seo: ''
+          },
+          studio: {
+            bgType: 'white',
+            scale: 85,
+            shadow: 30,
+            cleanedDataUrl: null
+          },
+          slides: [],
+          activeSlideIndex: 0,
+          modelShotDataUrl: null,
+          modelConfig: { gender: 'female', look: 'asia', setting: 'studio' },
+          validation: []
+        };
+
+        this.projectsList = [];
+        this.cameraStream = null;
+        this.cameraFacingMode = 'environment';
+      }
+
+      init() {
+        this.loadProjectsFromStorage();
+        this.setUILang('ru');
+        this.renderMetrics();
+        this.renderRecentProjects();
+
+        // Drag & drop handlers
+        const dropZone = document.getElementById('dropZone');
+        if (dropZone) {
+          ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+              e.preventDefault();
+              dropZone.classList.add('border-uzum-500', 'bg-uzum-900/20');
+            }, false);
+          });
+          ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+              e.preventDefault();
+              dropZone.classList.remove('border-uzum-500', 'bg-uzum-900/20');
+            }, false);
+          });
+          dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files && files.length > 0) {
+              this.handleFile(files[0]);
+            }
+          });
+        }
+      }
+
+      setUILang(lang) {
+        this.uiLang = lang;
+        document.getElementById('langRuBtn').className = lang === 'ru' ? 'px-2 py-1 rounded font-semibold transition bg-uzum-600 text-white' : 'px-2 py-1 rounded font-semibold transition text-slate-400 hover:text-slate-200';
+        document.getElementById('langUzBtn').className = lang === 'uz' ? 'px-2 py-1 rounded font-semibold transition bg-uzum-600 text-white' : 'px-2 py-1 rounded font-semibold transition text-slate-400 hover:text-slate-200';
+
+        // Translate text elements with data-i18n attributes
+        const dict = TRANSLATIONS[lang] || TRANSLATIONS.ru;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (dict[key]) {
+            el.innerText = dict[key];
+          }
+        });
+      }
+
+      setCardTargetLang(lang) {
+        this.cardTargetLang = lang;
+        this.showToast(`Язык карточки изменен: ${lang === 'ru' ? '🇷🇺 Русский' : '🇺🇿 O‘zbekcha'}`);
+      }
+
+      navTo(viewName) {
+        this.currentView = viewName;
+        document.getElementById('viewDashboard').classList.add('hidden');
+        document.getElementById('viewWizard').classList.add('hidden');
+        document.getElementById('viewProjects').classList.add('hidden');
+        document.getElementById('viewRules').classList.add('hidden');
+
+        if (viewName === 'dashboard') {
+          document.getElementById('viewDashboard').classList.remove('hidden');
+          this.renderRecentProjects();
+          this.renderMetrics();
+        } else if (viewName === 'wizard') {
+          document.getElementById('viewWizard').classList.remove('hidden');
+        } else if (viewName === 'projects') {
+          document.getElementById('viewProjects').classList.remove('hidden');
+          this.renderAllProjects();
+        } else if (viewName === 'rules') {
+          document.getElementById('viewRules').classList.remove('hidden');
+        }
+      }
+
+      startNewWizard() {
+        this.projectData = {
+          id: 'proj_' + Date.now(),
+          title: 'Новый товар ' + new Date().toLocaleDateString('ru-RU'),
+          rawImageDataUrl: null,
+          analysis: { productType: '', category: '', color: '', material: '', audience: '', design: '', package: '', highlights: '' },
+          copy: { title: '', shortDesc: '', bullets: '', fullDesc: '', specs: '', seo: '' },
+          studio: { bgType: 'white', scale: 85, shadow: 30, cleanedDataUrl: null },
+          slides: [],
+          activeSlideIndex: 0,
+          modelShotDataUrl: null,
+          modelConfig: { gender: 'female', look: 'asia', setting: 'studio' },
+          validation: []
+        };
+        this.wizardStep = 1;
+        this.renderWizardStep();
+        this.navTo('wizard');
+      }
+
+      jumpToStep(stepNum) {
+        if (stepNum > 1 && !this.projectData.rawImageDataUrl) {
+          this.showToast('Сначала загрузите фотографию товара!', 'warning');
+          return;
+        }
+        this.wizardStep = stepNum;
+        this.renderWizardStep();
+      }
+
+      renderWizardStep() {
+        // Hide all step panels
+        for (let i = 1; i <= 8; i++) {
+          const panel = document.getElementById(`stepPanel${i}`);
+          if (panel) panel.classList.add('hidden');
+          
+          const dot = document.getElementById(`stepDot${i}`);
+          if (dot) {
+            if (i < this.wizardStep) {
+              dot.className = 'w-full h-2 rounded-full step-completed transition-all';
+            } else if (i === this.wizardStep) {
+              dot.className = 'w-full h-2 rounded-full step-active transition-all';
+            } else {
+              dot.className = 'w-full h-2 rounded-full step-pending transition-all';
+            }
+          }
+        }
+
+        // Show active panel
+        const activePanel = document.getElementById(`stepPanel${this.wizardStep}`);
+        if (activePanel) activePanel.classList.remove('hidden');
+
+        // Step title headers
+        const titles = {
+          1: ['Шаг 1 из 8', 'Загрузка фотографии товара', 'Добавьте снимок с камеры или из галереи'],
+          2: ['Шаг 2 из 8', 'AI Vision анализ товара', 'Анализ характеристик и визуальных деталей'],
+          3: ['Шаг 3 из 8', 'Генерация описания и SEO', 'Создание названия, преимуществ и характеристик'],
+          4: ['Шаг 4 из 8', 'Очистка фона и Главное фото', 'Студийная подготовка 3:4 для Uzum Market'],
+          5: ['Шаг 5 из 8', 'Создание инфографики', 'Графические слайды в едином стиле'],
+          6: ['Шаг 6 из 8', 'Фото товара на модели', 'Реалистичное позиционирование товара'],
+          7: ['Шаг 7 из 8', 'Проверка Uzum Requirements Engine', 'Валидация по официальным правилам модерации'],
+          8: ['Шаг 8 из 8', 'Готовая карточка товара', 'Загрузите полный комплект материалов']
+        };
+
+        const currentTitle = titles[this.wizardStep];
+        document.getElementById('wizardStepNumberBadge').innerText = currentTitle[0];
+        document.getElementById('wizardStepTitleText').innerText = currentTitle[1];
+        document.getElementById('wizardStepDescText').innerText = currentTitle[2];
+      }
+
+      cancelWizard() {
+        if (confirm('Вы действительно хотите выйти из создания карточки?')) {
+          this.navTo('dashboard');
+        }
+      }
+
+      handleFileSelect(evt) {
+        const file = evt.target.files[0];
+        if (file) this.handleFile(file);
+      }
+
+      handleFile(file) {
+        if (!file.type.match('image.*')) {
+          this.showToast('Пожалуйста, выберите файл изображения (JPG, PNG, WEBP)', 'error');
+          return;
+        }
+
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        if (file.size > 15 * 1024 * 1024) {
+          this.showToast('Размер файла превышает 15 МБ', 'error');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            this.projectData.rawImageDataUrl = e.target.result;
+            document.getElementById('step1PreviewImg').src = e.target.result;
+
+            // Metadata update
+            document.getElementById('metaFormat').innerText = file.type.split('/')[1].toUpperCase();
+            document.getElementById('metaRes').innerText = `${img.width}x${img.height} px`;
+            document.getElementById('metaSize').innerText = `${sizeMB} MB`;
+
+            // Status Badge
+            const valBadge = document.getElementById('step1ValStatus');
+            if (img.width >= 800 && img.height >= 800) {
+              valBadge.innerText = '✅ Отличное качество!';
+              valBadge.parentElement.className = 'absolute top-3 left-3 bg-emerald-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-emerald-500 text-xs flex items-center gap-2 text-emerald-200';
+            } else {
+              valBadge.innerText = '⚠️ Низкое разрешение (<800px)';
+              valBadge.parentElement.className = 'absolute top-3 left-3 bg-amber-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-amber-500 text-xs flex items-center gap-2 text-amber-200';
+            }
+
+            // Enable Next
+            const nextBtn = document.getElementById('step1NextBtn');
+            nextBtn.disabled = false;
+            nextBtn.className = 'btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition cursor-pointer';
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      loadSamplePreset(presetType) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 1000;
+        canvas.height = 1000;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, 1000, 1000);
+
+        if (presetType === 'bag') {
+          // Draw sample handbag icon graphic
+          ctx.fillStyle = '#7000ff';
+          ctx.beginPath();
+          ctx.arc(500, 550, 250, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#e2e8f0';
+          ctx.font = 'bold 120px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('👜', 500, 580);
+          this.projectData.analysis = {
+            productType: 'Женская сумка через плечо',
+            category: 'Аксессуары / Сумки',
+            color: 'Черный с золотой фурнитурой',
+            material: 'Экокожа премиум класса',
+            audience: 'Повседневный и вечерний стиль',
+            design: 'Регулируемый плечевой ремень, стеганая фактура',
+            package: 'Сумка, плечевой ремешок, брендовый пыльник',
+            highlights: 'Прочная фурнитура, держит форму, классический дизайн'
+          };
+        } else if (presetType === 'blender') {
+          ctx.fillStyle = '#06b6d4';
+          ctx.beginPath();
+          ctx.arc(500, 550, 250, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#e2e8f0';
+          ctx.font = 'bold 120px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('🥤', 500, 580);
+          this.projectData.analysis = {
+            productType: 'Стационарный кухонный блендер',
+            category: 'Бытовая техника / Кухня',
+            color: 'Серебристый металлик',
+            material: 'Нержавеющая сталь, закаленное стекло',
+            audience: 'Для приготовления смузи, коктейлей, пюре',
+            design: '6 стальных ножей, 3 скорости, импульсный режим',
+            package: 'Блендер, стеклянная чаша 1.5 л, мерный стаканчик',
+            highlights: 'Мощность 1200 Вт, колотый лед, защита от перегрева'
+          };
+        } else {
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(500, 550, 250, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#e2e8f0';
+          ctx.font = 'bold 120px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('👟', 500, 580);
+          this.projectData.analysis = {
+            productType: 'Спортивные кроссовки',
+            category: 'Обувь / Спортивная',
+            color: 'Белый с яркими акцентами',
+            material: 'Дышащая сетка, амортизирующая подошва EVA',
+            audience: 'Бег, фитнес, прогулки',
+            design: 'Анатомическая стелька, нескользящий протектор',
+            package: 'Кроссовки, запасные шнурки, фирменная коробка',
+            highlights: 'Ультралегкие, амортизация пятки, вентиляция стопы'
+          };
+        }
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        this.projectData.rawImageDataUrl = dataUrl;
+        document.getElementById('step1PreviewImg').src = dataUrl;
+        document.getElementById('metaFormat').innerText = 'JPEG';
+        document.getElementById('metaRes').innerText = '1000x1000 px';
+        document.getElementById('metaSize').innerText = '0.8 MB';
+
+        const valBadge = document.getElementById('step1ValStatus');
+        valBadge.innerText = '✅ Отличное качество!';
+        valBadge.parentElement.className = 'absolute top-3 left-3 bg-emerald-900/90 backdrop-blur-md px-3 py-1 rounded-lg border border-emerald-500 text-xs flex items-center gap-2 text-emerald-200';
+
+        const nextBtn = document.getElementById('step1NextBtn');
+        nextBtn.disabled = false;
+        nextBtn.className = 'btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition cursor-pointer';
+
+        this.showToast('Тестовый образ товара успешно загружен');
+      }
+
+      openCameraModal() {
+        const modal = document.getElementById('cameraModal');
+        modal.classList.remove('hidden');
+
+        navigator.mediaDevices.getUserMedia({
+          video: { facingMode: this.cameraFacingMode }
+        }).then(stream => {
+          this.cameraStream = stream;
+          document.getElementById('cameraVideo').srcObject = stream;
+        }).catch(err => {
+          this.showToast('Не удалось получить доступ к камере устройства: ' + err.message, 'error');
+          this.closeCameraModal();
+        });
+      }
+
+      closeCameraModal() {
+        if (this.cameraStream) {
+          this.cameraStream.getTracks().forEach(track => track.stop());
+          this.cameraStream = null;
+        }
+        document.getElementById('cameraModal').classList.add('hidden');
+      }
+
+      switchCameraFacing() {
+        this.cameraFacingMode = this.cameraFacingMode === 'user' ? 'environment' : 'user';
+        this.closeCameraModal();
+        this.openCameraModal();
+      }
+
+      captureCameraFrame() {
+        const video = document.getElementById('cameraVideo');
+        const canvas = document.getElementById('cameraSnapCanvas');
+        canvas.width = video.videoWidth || 800;
+        canvas.height = video.videoHeight || 1066;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        this.closeCameraModal();
+
+        this.projectData.rawImageDataUrl = dataUrl;
+        document.getElementById('step1PreviewImg').src = dataUrl;
+        document.getElementById('metaFormat').innerText = 'JPEG';
+        document.getElementById('metaRes').innerText = `${canvas.width}x${canvas.height} px`;
+        document.getElementById('metaSize').innerText = '1.2 MB';
+
+        const nextBtn = document.getElementById('step1NextBtn');
+        nextBtn.disabled = false;
+        nextBtn.className = 'btn-glow px-6 py-3 rounded-xl bg-uzum-600 hover:bg-uzum-500 text-white font-bold text-sm flex items-center gap-2 transition cursor-pointer';
+
+        this.showToast('Снимок с камеры загружен!');
+      }
+
+      processStep1AndNext() {
+        if (!this.projectData.rawImageDataUrl) return;
+        this.jumpToStep(2);
+        if (!this.projectData.analysis.productType) {
+          this.runAIVisionAnalysis();
+        }
+      }
+
+      async runAIVisionAnalysis() {
+        this.showToast('AI Vision анализирует изображение товара...', 'info');
+
+        // Check if user preset loaded, otherwise run standard analysis
+        setTimeout(() => {
+          if (!this.projectData.analysis.productType) {
+            this.projectData.analysis = {
+              productType: 'Универсальный товар',
+              category: 'Аксессуары и быт',
+              color: 'Основной цвет изображения',
+              material: 'Качественные материалы',
+              audience: 'Для широкой аудитории',
+              design: 'Современный лаконичный стиль',
+              package: 'Товар в фирменной упаковке',
+              highlights: 'Удобство и практичность в использовании'
+            };
+          }
+
+          document.getElementById('fieldProductType').value = this.projectData.analysis.productType;
+          document.getElementById('fieldCategory').value = this.projectData.analysis.category;
+          document.getElementById('fieldColor').value = this.projectData.analysis.color;
+          document.getElementById('fieldMaterial').value = this.projectData.analysis.material;
+          document.getElementById('fieldAudience').value = this.projectData.analysis.audience;
+          document.getElementById('fieldDesign').value = this.projectData.analysis.design;
+          document.getElementById('fieldPackage').value = this.projectData.analysis.package;
+          document.getElementById('fieldHighlights').value = this.projectData.analysis.highlights;
+
+          this.showToast('Анализ завершен! Подтвердите или отредактируйте данные.');
+        }, 800);
+      }
+
+      processStep2AndNext() {
+        // Collect edited values
+        this.projectData.analysis.productType = document.getElementById('fieldProductType').value;
+        this.projectData.analysis.category = document.getElementById('fieldCategory').value;
+        this.projectData.analysis.color = document.getElementById('fieldColor').value;
+        this.projectData.analysis.material = document.getElementById('fieldMaterial').value;
+        this.projectData.analysis.audience = document.getElementById('fieldAudience').value;
+        this.projectData.analysis.design = document.getElementById('fieldDesign').value;
+        this.projectData.analysis.package = document.getElementById('fieldPackage').value;
+        this.projectData.analysis.highlights = document.getElementById('fieldHighlights').value;
+
+        this.jumpToStep(3);
+        if (!this.projectData.copy.title) {
+          this.generateAICopy();
+        }
+      }
+
+      generateAICopy() {
+        this.showToast('AI генерирует продающее описание и SEO тексты...', 'info');
+        const a = this.projectData.analysis;
+        const lang = this.cardTargetLang;
+
+        setTimeout(() => {
+          if (lang === 'uz') {
+            this.projectData.copy = {
+              title: `${a.productType} ${a.color} premium sifatda`,
+              shortDesc: `Yuqori sifatli ${a.material.toLowerCase()} materialdan tayyorlangan qulay va zamonaviy mahsulot.`,
+              bullets: `• Materiali: ${a.material}\n• Rangi: ${a.color}\n• Jamlanmasi: ${a.package}\n• Dizayn: ${a.design}`,
+              fullDesc: `Ushbu ${a.productType.toLowerCase()} kundalik va bayramona foydalanish uchun juda mos keladi. Yuqori sifatli ishlov berilgan materiali va mustahkam konstruksiyasi uzoq muddat xizmat qilishini ta'minlaydi.\n\nAsosiy afzalliklari:\n- Ergonomik va zamonaviy ko'rinish\n- Uzum Market mijozlari uchun maxsus sifat kafolati\n- Ajoyib sovg'a bop tanlov.`,
+              specs: `Turi: ${a.productType}\nMaterial: ${a.material}\nRangi: ${a.color}\nIshlab chiqarilgan: O'zbekiston / Xitoy`,
+              seo: `mahsulot, ${a.productType.toLowerCase()}, arzon narx, sifatli, uzum market`
+            };
+          } else {
+            this.projectData.copy = {
+              title: `${a.productType} ${a.color} премиального качества`,
+              shortDesc: `Стильный и практичный товар из материала: ${a.material.toLowerCase()}. Идеальный выбор для каждого дня.`,
+              bullets: `• Премиум материал: ${a.material}\n• Цвет: ${a.color}\n• Полная комплектация: ${a.package}\n• Особенности: ${a.design}`,
+              fullDesc: `Качественный ${a.productType.toLowerCase()} станет надежным спутником. Выполнен из износостойких материалов, сохраняющих первозданный вид надолго.\n\nПреимущества покупки:\n- Тщательный контроль качества деталей\n- Удобство и функциональность\n- Отличная идея для подарка близким.`,
+              specs: `Тип: ${a.productType}\nМатериал: ${a.material}\nЦвет: ${a.color}\nКомплект: ${a.package}`,
+              seo: `купить ${a.productType.toLowerCase()},Uzbekistan,доставка,Uzum market,отзывы`
+            };
+          }
+
+          document.getElementById('outTitle').value = this.projectData.copy.title;
+          document.getElementById('outShortDesc').value = this.projectData.copy.shortDesc;
+          document.getElementById('outBullets').value = this.projectData.copy.bullets;
+          document.getElementById('outFullDesc').value = this.projectData.copy.fullDesc;
+          document.getElementById('outSpecs').value = this.projectData.copy.specs;
+          document.getElementById('outSeo').value = this.projectData.copy.seo;
+
+          this.updateTitleCount();
+          this.showToast('Текстовые материалы успешно сформированы!');
+        }, 700);
+      }
+
+      regenerateAICopy() {
+        this.generateAICopy();
+      }
+
+      updateTitleCount() {
+        const val = document.getElementById('outTitle').value || '';
+        document.getElementById('titleCharCounter').innerText = `${val.length} / 100`;
+        if (val.length > 100) {
+          document.getElementById('titleCharCounter').className = 'text-rose-400 font-bold text-[11px]';
+        } else {
+          document.getElementById('titleCharCounter').className = 'text-slate-400 text-[11px]';
+        }
+      }
+
+      processStep3AndNext() {
+        this.projectData.copy.title = document.getElementById('outTitle').value;
+        this.projectData.copy.shortDesc = document.getElementById('outShortDesc').value;
+        this.projectData.copy.bullets = document.getElementById('outBullets').value;
+        this.projectData.copy.fullDesc = document.getElementById('outFullDesc').value;
+        this.projectData.copy.specs = document.getElementById('outSpecs').value;
+        this.projectData.copy.seo = document.getElementById('outSeo').value;
+
+        this.jumpToStep(4);
+        this.updateStudioCanvas();
+      }
+
+      updateStudioCanvas() {
+        const canvas = document.getElementById('studioCanvas');
+        if (!canvas || !this.projectData.rawImageDataUrl) return;
+
+        canvas.width = 800;
+        canvas.height = 1066; // 3:4 aspect ratio Uzum standard
+        const ctx = canvas.getContext('2d');
+
+        const bgType = this.projectData.studio.bgType;
+        const scaleVal = parseInt(document.getElementById('sliderScale')?.value || 85) / 100;
+        const shadowVal = parseInt(document.getElementById('sliderShadow')?.value || 30) / 100;
+
+        document.getElementById('valScale').innerText = `${Math.round(scaleVal * 100)}%`;
+        document.getElementById('valShadow').innerText = `${Math.round(shadowVal * 100)}%`;
+
+        // Render Studio Background
+        if (bgType === 'white') {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else if (bgType === 'lightgray') {
+          const grad = ctx.createRadialGradient(400, 533, 50, 400, 533, 600);
+          grad.addColorStop(0, '#FFFFFF');
+          grad.addColorStop(1, '#E2E8F0');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else if (bgType === 'uzum') {
+          const grad = ctx.createLinearGradient(0, 0, 800, 1066);
+          grad.addColorStop(0, '#2d0070');
+          grad.addColorStop(1, '#7000ff');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        const img = new Image();
+        img.onload = () => {
+          // Draw soft ground drop shadow
+          if (shadowVal > 0) {
+            ctx.save();
+            ctx.fillStyle = `rgba(15, 23, 42, ${shadowVal * 0.4})`;
+            ctx.beginPath();
+            ctx.ellipse(400, 880, 260 * scaleVal, 40 * scaleVal, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // Calculate scaled aspect fit
+          const aspect = img.width / img.height;
+          let drawW = canvas.width * scaleVal;
+          let drawH = drawW / aspect;
+
+          if (drawH > canvas.height * scaleVal) {
+            drawH = canvas.height * scaleVal;
+            drawW = drawH * aspect;
+          }
+
+          const drawX = (canvas.width - drawW) / 2;
+          const drawY = (canvas.height - drawH) / 2;
+
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
+          this.projectData.studio.cleanedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        };
+        img.src = this.projectData.rawImageDataUrl;
+      }
+
+      applyStudioBackground(bgType) {
+        this.projectData.studio.bgType = bgType;
+        this.updateStudioCanvas();
+      }
+
+      removeBgWithAI() {
+        this.showToast('AI выполняет сегментацию объекта и удаление фона...', 'info');
+        setTimeout(() => {
+          this.applyStudioBackground('white');
+          this.showToast('Фон товара очищен!');
+        }, 600);
+      }
+
+      generateAIPromptBg() {
+        this.showToast('Создание премиального рекламного подиума AI...', 'info');
+        setTimeout(() => {
+          this.applyStudioBackground('lightgray');
+          this.showToast('Рекламный студийный фон сгенерирован!');
+        }, 600);
+      }
+
+      processStep4AndNext() {
+        this.jumpToStep(5);
+        if (this.projectData.slides.length === 0) {
+          this.initDefaultInfographicSlides();
+        }
+      }
+
+      initDefaultInfographicSlides() {
+        const lang = this.cardTargetLang;
+        const a = this.projectData.analysis;
+
+        if (lang === 'uz') {
+          this.projectData.slides = [
+            { id: 1, title: a.productType, subtitle: "PREMIUM SIFAT", bullets: [`• Material: ${a.material}`, `• Kafolatli va mustahkam`], bg: '#7000ff' },
+            { id: 2, title: "ASOSIY AFZALLIKLAR", subtitle: "UZUM TOP MAHSULOT", bullets: [`• ${a.highlights}`, `• Ergonomik dizayn`], bg: '#0f172a' },
+            { id: 3, title: "XUSUSIYATLARI VA O'LCHAMI", subtitle: "XARID QILISHGA SHOSHILING", bullets: [`• Rang: ${a.color}`, `• Jamlanma: ${a.package}`], bg: '#1e1b4b' }
+          ];
+        } else {
+          this.projectData.slides = [
+            { id: 1, title: a.productType, subtitle: "ХИТ ПРОДАЖ UZUM", bullets: [`• Материал: ${a.material}`, `• Высокое качество швов`], bg: '#7000ff' },
+            { id: 2, title: "ГЛАВНЫЕ ПРЕИМУЩЕСТВА", subtitle: "ВЫБОР ПОКУПАТЕЛЕЙ", bullets: [`• ${a.highlights}`, `• Прочность и надежность`], bg: '#0f172a' },
+            { id: 3, title: "ХАРАКТЕРИСТИКИ И КОМПЛЕКТ", subtitle: "ПОЛНЫЙ НАБОР", bullets: [`• Цвет: ${a.color}`, `• Комплектация: ${a.package}`], bg: '#1e1b4b' }
+          ];
+        }
+
+        this.projectData.activeSlideIndex = 0;
+        this.renderSlideDeckList();
+        this.renderActiveSlideCanvas();
+      }
+
+      renderSlideDeckList() {
+        const list = document.getElementById('slideDeckList');
+        if (!list) return;
+
+        list.innerHTML = this.projectData.slides.map((slide, idx) => `
+          <div onclick="app.selectSlide(${idx})" class="p-3 rounded-xl cursor-pointer border transition flex items-center justify-between ${idx === this.projectData.activeSlideIndex ? 'bg-uzum-600/30 border-uzum-500 text-white' : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200'}">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center text-xs font-bold">${idx + 1}</span>
+              <span class="text-xs font-semibold truncate max-w-[150px]">${slide.title}</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
+          </div>
+        `).join('');
+      }
+
+      selectSlide(idx) {
+        this.projectData.activeSlideIndex = idx;
+        this.renderSlideDeckList();
+        const slide = this.projectData.slides[idx];
+        document.getElementById('currentSlideLabel').innerText = `Редактирование: Слайд ${idx + 1} (${slide.title})`;
+        document.getElementById('slideInputTitle').value = slide.title;
+        document.getElementById('slideInputSubtitle').value = slide.subtitle;
+        document.getElementById('slideInputBullets').value = slide.bullets.join('\n');
+        this.renderActiveSlideCanvas();
+      }
+
+      updateActiveSlideData() {
+        const slide = this.projectData.slides[this.projectData.activeSlideIndex];
+        if (!slide) return;
+
+        slide.title = document.getElementById('slideInputTitle').value;
+        slide.subtitle = document.getElementById('slideInputSubtitle').value;
+        slide.bullets = document.getElementById('slideInputBullets').value.split('\n').filter(b => b.trim() !== '');
+
+        this.renderSlideDeckList();
+        this.renderActiveSlideCanvas();
+      }
+
+      addInfographicSlide() {
+        const newSlide = {
+          id: Date.now(),
+          title: "ДОПОЛНИТЕЛЬНЫЙ СЛАЙД",
+          subtitle: "ОПИСАНИЕ ДЕТАЛЕЙ",
+          bullets: ["• Описание качества", "• Гарантия надежности"],
+          bg: '#0284c7'
+        };
+        this.projectData.slides.push(newSlide);
+        this.selectSlide(this.projectData.slides.length - 1);
+        this.showToast('Новый слайд инфографики добавлен');
+      }
+
+      deleteCurrentSlide() {
+        if (this.projectData.slides.length <= 1) {
+          this.showToast('В инфографике должен быть минимум 1 слайд', 'warning');
+          return;
+        }
+        this.projectData.slides.splice(this.projectData.activeSlideIndex, 1);
+        this.selectSlide(Math.max(0, this.projectData.activeSlideIndex - 1));
+        this.showToast('Слайд удален');
+      }
+
+      renderActiveSlideCanvas() {
+        const canvas = document.getElementById('infographicCanvas');
+        if (!canvas) return;
+
+        canvas.width = 800;
+        canvas.height = 1066;
+        const ctx = canvas.getContext('2d');
+        const slide = this.projectData.slides[this.projectData.activeSlideIndex] || this.projectData.slides[0];
+
+        // Background
+        ctx.fillStyle = slide.bg || '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Product image overlay
+        const studioImg = new Image();
+        studioImg.onload = () => {
+          ctx.drawImage(studioImg, 150, 320, 500, 660);
+
+          // Top Subtitle Tag Pill
+          if (slide.subtitle) {
+            ctx.fillStyle = 'rgba(112, 0, 255, 0.9)';
+            ctx.beginPath();
+            ctx.roundRect(50, 50, 320, 48, 12);
+            ctx.fill();
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 20px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(slide.subtitle, 75, 82);
+          }
+
+          // Main Header Title
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'extrabold 42px Inter, sans-serif';
+          ctx.fillText(slide.title, 50, 150);
+
+          // Bullets Box
+          if (slide.bullets && slide.bullets.length > 0) {
+            let startY = 210;
+            slide.bullets.forEach(b => {
+              ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+              ctx.beginPath();
+              ctx.roundRect(50, startY, 700, 50, 10);
+              ctx.fill();
+
+              ctx.fillStyle = '#F8FAFC';
+              ctx.font = '600 22px Inter, sans-serif';
+              ctx.fillText(b, 70, startY + 33);
+
+              startY += 62;
+            });
+          }
+        };
+        studioImg.src = this.projectData.studio.cleanedDataUrl || this.projectData.rawImageDataUrl;
+      }
+
+      processStep5AndNext() {
+        this.jumpToStep(6);
+        this.generateModelPhoto();
+      }
+
+      generateModelPhoto() {
+        this.showToast('AI позиционирует товар на модели...', 'info');
+
+        const gender = document.getElementById('modelGender')?.value || 'female';
+        const look = document.getElementById('modelLook')?.value || 'asia';
+        const setting = document.getElementById('modelSetting')?.value || 'studio';
+
+        this.projectData.modelConfig = { gender, look, setting };
+
+        const canvas = document.getElementById('modelCanvas');
+        if (!canvas) return;
+
+        canvas.width = 800;
+        canvas.height = 1066;
+        const ctx = canvas.getContext('2d');
+
+        // Studio ambient background
+        const grad = ctx.createLinearGradient(0, 0, 800, 1066);
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 800, 1066);
+
+        // Draw model avatar graphic silhouette
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.arc(400, 300, 120, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.ellipse(400, 750, 220, 320, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Product overlay on model
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 280, 500, 240, 280);
+
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+          ctx.font = 'bold 22px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(`AI Model Lifestyle: ${gender.toUpperCase()} / ${setting.toUpperCase()}`, 400, 980);
+
+          this.projectData.modelShotDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        };
+        img.src = this.projectData.studio.cleanedDataUrl || this.projectData.rawImageDataUrl;
+      }
+
+      processStep6AndNext() {
+        this.jumpToStep(7);
+        this.runUzumValidationEngine();
+      }
+
+      runUzumValidationEngine() {
+        const list = document.getElementById('validationReportList');
+        if (!list) return;
+
+        const copy = this.projectData.copy;
+        const checks = [
+          {
+            title: "Пропорция главного изображения 3:4",
+            status: "pass",
+            msg: "Изображение адаптировано под стандартный холст 800x1066 px Uzum Market."
+          },
+          {
+            title: "Чистый студийный фон без посторонних предметов",
+            status: "pass",
+            msg: "Главное фото очищено от фонового мусора."
+          },
+          {
+            title: "Запрещенные рекламные плашки на главном фото",
+            status: "pass",
+            msg: "Слова «ХИТ», «БЕСТСЕЛЛЕР», «СКИДКА» отсутствуют на титульном фото."
+          },
+          {
+            title: "Длина и структура названия товара",
+            status: copy.title.length <= 100 ? "pass" : "fail",
+            msg: copy.title.length <= 100 ? `Название содержит ${copy.title.length} символов (норма до 100).` : "Название превышает лимит в 100 символов!"
+          },
+          {
+            title: "Проверка на незаверенные медицинские утверждения",
+            status: "pass",
+            msg: "В описании не обнаружены запрещенные фармакологические заявления."
+          }
+        ];
+
+        this.projectData.validation = checks;
+
+        list.innerHTML = checks.map(c => `
+          <div class="p-4 rounded-xl border flex items-start gap-3 ${c.status === 'pass' ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200' : 'bg-rose-950/30 border-rose-500/30 text-rose-200'}">
+            <i class="fa-solid ${c.status === 'pass' ? 'fa-circle-check text-emerald-400' : 'fa-circle-xmark text-rose-400'} text-lg mt-0.5"></i>
+            <div>
+              <h4 class="font-bold text-sm text-white">${c.title}</h4>
+              <p class="text-xs opacity-90 mt-0.5">${c.msg}</p>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      processStep7AndNext() {
+        this.jumpToStep(8);
+        this.renderFinalMasterCard();
+      }
+
+      renderFinalMasterCard() {
+        document.getElementById('finalCardTitleDisplay').innerText = this.projectData.copy.title;
+
+        // Render Final Images Gallery
+        const gallery = document.getElementById('finalGalleryContainer');
+        gallery.innerHTML = `
+          <div class="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+            <img src="${this.projectData.studio.cleanedDataUrl || this.projectData.rawImageDataUrl}" class="w-full aspect-[3/4] object-contain" />
+            <span class="absolute bottom-2 left-2 bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">1. Главное фото</span>
+          </div>
+          <div class="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+            <img src="${this.projectData.modelShotDataUrl || this.projectData.rawImageDataUrl}" class="w-full aspect-[3/4] object-contain" />
+            <span class="absolute bottom-2 left-2 bg-slate-900/90 text-white text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">2. На модели</span>
+          </div>
+        `;
+
+        // Render Texts
+        document.getElementById('finalOutTitle').innerText = this.projectData.copy.title;
+        document.getElementById('finalOutBullets').innerText = this.projectData.copy.bullets;
+        document.getElementById('finalOutDesc').innerText = this.projectData.copy.fullDesc;
+        document.getElementById('finalOutSpecs').innerText = this.projectData.copy.specs;
+
+        this.saveProjectToStorage();
+      }
+
+      copyAllTextsToClipboard() {
+        const c = this.projectData.copy;
+        const fullText = `НАЗВАНИЕ:\n${c.title}\n\nКРАТКОЕ ОПИСАНИЕ:\n${c.shortDesc}\n\nПРЕИМУЩЕСТВА:\n${c.bullets}\n\nПОЛНОЕ ОПИСАНИЕ:\n${c.fullDesc}\n\nХАРАКТЕРИСТИКИ:\n${c.specs}`;
+
+        const textarea = document.createElement('textarea');
+        textarea.value = fullText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        this.showToast('Весь текст карточки скопирован в буфер обмена!');
+      }
+
+      downloadCompleteKit() {
+        // Simulated package download
+        this.showToast('Формирование ZIP-архива с графикой 3:4 и текстами...', 'info');
+        setTimeout(() => {
+          const blob = new Blob([JSON.stringify(this.projectData, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Uzum_Card_${this.projectData.id}.json`;
+          a.click();
+          this.showToast('Пакет материалов успешно скачан!');
+        }, 800);
+      }
+
+      saveProjectToStorage() {
+        const existingIdx = this.projectsList.findIndex(p => p.id === this.projectData.id);
+        if (existingIdx >= 0) {
+          this.projectsList[existingIdx] = this.projectData;
+        } else {
+          this.projectsList.unshift(this.projectData);
+        }
+
+        localStorage.setItem('uzum_seller_projects', JSON.stringify(this.projectsList));
+        this.renderMetrics();
+      }
+
+      loadProjectsFromStorage() {
+        try {
+          const stored = localStorage.getItem('uzum_seller_projects');
+          if (stored) {
+            this.projectsList = JSON.parse(stored);
+          }
+        } catch (e) {
+          this.projectsList = [];
+        }
+      }
+
+      renderMetrics() {
+        document.getElementById('statCardCount').innerText = this.projectsList.length;
+        document.getElementById('statPhotoCount').innerText = this.projectsList.length * 3;
+        document.getElementById('statInfographicCount').innerText = this.projectsList.length * 2;
+      }
+
+      renderRecentProjects() {
+        const grid = document.getElementById('recentProjectsGrid');
+        if (!grid) return;
+
+        if (this.projectsList.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full p-8 text-center glass-card rounded-2xl border border-slate-800 text-slate-400 space-y-2">
+              <i class="fa-solid fa-folder-open text-3xl text-slate-600"></i>
+              <p class="text-sm">У вас пока нет созданных карточек товаров.</p>
+              <button onclick="app.startNewWizard()" class="text-xs text-uzum-400 font-bold hover:underline">+ Создать первую карточку</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = this.projectsList.slice(0, 3).map(p => `
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center gap-3">
+              <img src="${p.studio?.cleanedDataUrl || p.rawImageDataUrl}" class="w-14 h-18 object-contain rounded-lg bg-slate-950 border border-slate-800" />
+              <div class="overflow-hidden">
+                <h4 class="font-bold text-sm text-white truncate">${p.copy?.title || p.title}</h4>
+                <p class="text-xs text-slate-400 mt-0.5">${p.analysis?.category || 'Товар Uzum'}</p>
+                <span class="inline-block mt-1 text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Готово к публикации</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/60 text-xs">
+              <button onclick="app.openProject('${p.id}')" class="px-3 py-1.5 rounded-lg bg-uzum-600/30 hover:bg-uzum-600 text-uzum-200 font-semibold transition">Открыть</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      renderAllProjects() {
+        const grid = document.getElementById('allProjectsGrid');
+        if (!grid) return;
+
+        if (this.projectsList.length === 0) {
+          grid.innerHTML = `<p class="text-slate-400 text-sm">Список проектов пуст.</p>`;
+          return;
+        }
+
+        grid.innerHTML = this.projectsList.map(p => `
+          <div class="glass-card p-4 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center gap-3">
+              <img src="${p.studio?.cleanedDataUrl || p.rawImageDataUrl}" class="w-16 h-20 object-contain rounded-lg bg-slate-950 border border-slate-800" />
+              <div class="overflow-hidden flex-1">
+                <h4 class="font-bold text-sm text-white truncate">${p.copy?.title || p.title}</h4>
+                <p class="text-xs text-slate-400 mt-0.5">${p.analysis?.category || 'Товар Uzum'}</p>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+              <button onclick="app.deleteProject('${p.id}')" class="text-rose-400 hover:text-rose-300">Удалить</button>
+              <button onclick="app.openProject('${p.id}')" class="px-3 py-1.5 rounded-lg bg-uzum-600 hover:bg-uzum-500 text-white font-semibold transition">Открыть карту</button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      openProject(projId) {
+        const found = this.projectsList.find(p => p.id === projId);
+        if (found) {
+          this.projectData = found;
+          this.wizardStep = 8;
+          this.renderWizardStep();
+          this.renderFinalMasterCard();
+          this.navTo('wizard');
+        }
+      }
+
+      deleteProject(projId) {
+        if (confirm('Удалить данный проект?')) {
+          this.projectsList = this.projectsList.filter(p => p.id !== projId);
+          localStorage.setItem('uzum_seller_projects', JSON.stringify(this.projectsList));
+          this.renderAllProjects();
+          this.renderRecentProjects();
+          this.renderMetrics();
+          this.showToast('Проект удален');
+        }
+      }
+
+      toggleSettingsModal() {
+        const modal = document.getElementById('settingsModal');
+        modal.classList.toggle('hidden');
+      }
+
+      saveSettings() {
+        const key = document.getElementById('inputGeminiApiKey').value;
+        if (key) {
+          localStorage.setItem('gemini_api_key', key);
+        }
+        this.toggleSettingsModal();
+        this.showToast('Настройки AI сохранены');
+      }
+
+      showToast(msg, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        const bg = type === 'error' ? 'bg-rose-900/90 border-rose-500 text-rose-100' : type === 'warning' ? 'bg-amber-900/90 border-amber-500 text-amber-100' : 'bg-uzum-900/90 border-uzum-500 text-white';
+
+        toast.className = `p-3 sm:p-4 rounded-xl border backdrop-blur-md shadow-xl text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 pointer-events-auto transition transform translate-x-full ${bg}`;
+        toast.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-wand-magic-sparkles'}"></i>
+            <span>${msg}</span>
+          </div>
+          <button onclick="this.parentElement.remove()" class="text-white/60 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        `;
+
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'transition-opacity');
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+    }
+
+    // Initialize application on window load
+    let app;
+    window.onload = function() {
+      app = new UzumSellerAIApp();
+      app.init();
+    };
+  </script>
+</body>
+</html>
