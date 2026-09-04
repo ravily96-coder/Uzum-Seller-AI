@@ -52,7 +52,6 @@
 
       <!-- ЯЗЫКИ И НАВИГАЦИЯ -->
       <div class="flex items-center space-x-3 sm:space-x-4">
-        <!-- Язык карточки -->
         <div class="hidden md:flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700 text-xs">
           <span class="px-2 text-slate-400">Язык карточки:</span>
           <select id="cardLangSelect" class="bg-transparent text-white focus:outline-none cursor-pointer font-medium">
@@ -61,7 +60,6 @@
           </select>
         </div>
 
-        <!-- Язык интерфейса -->
         <button id="btnToggleUILang" onclick="toggleUILanguage()" class="flex items-center space-x-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs transition">
           <span id="uiLangFlag">🇷🇺</span>
           <span id="uiLangText" class="font-medium">RU</span>
@@ -81,7 +79,6 @@
     <!-- ВЬЮ 1: ДАШБОРД (ГЛАВНЫЙ ЭКРАН) -->
     <section id="viewDashboard" class="space-y-8">
       
-      <!-- БАННЕР ПРИВЕТСТВИЯ -->
       <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-900/60 via-slate-900 to-slate-900 border border-purple-500/20 p-6 sm:p-10">
         <div class="relative z-10 max-w-2xl">
           <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight" id="dashTitle">
@@ -103,7 +100,6 @@
         </div>
       </div>
 
-      <!-- МЕТРИКИ -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
           <div class="text-slate-400 text-xs font-medium">Создано карточек</div>
@@ -123,14 +119,11 @@
         </div>
       </div>
 
-      <!-- СПИСОК ПРОЕКТОВ -->
       <div>
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-bold text-white">Мои товары и проекты</h2>
         </div>
-        <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Заполняется динамически через JS -->
-        </div>
+        <div id="projectsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </div>
 
     </section>
@@ -204,7 +197,6 @@
 
           <div class="max-w-xl mx-auto space-y-4">
             
-            <!-- КНОПКА БЫСТРОГО ТЕСТА С РУБАШКОЙ -->
             <div class="bg-purple-950/40 border border-purple-500/30 rounded-xl p-3 flex items-center justify-between">
               <div class="flex items-center space-x-3">
                 <i class="fa-solid fa-shirt text-purple-400 text-xl"></i>
@@ -218,7 +210,6 @@
               </button>
             </div>
 
-            <!-- ЗОНА ДРОПЗОНЫ -->
             <div id="dropZone" onclick="triggerFileInput()" class="border-2 border-dashed border-slate-700 hover:border-purple-500 bg-slate-800/40 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition relative">
               <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleFileSelect(event)" />
               <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleFileSelect(event)" />
@@ -233,7 +224,6 @@
                 </div>
               </div>
 
-              <!-- ПРЕВЬЮ ЗАГРУЖЕННОГО ИЗОБРАЖЕНИЯ -->
               <div id="uploadPreviewContainer" class="hidden relative">
                 <img id="uploadPreview" src="" alt="Товар" class="max-h-64 mx-auto rounded-lg border border-slate-700 object-contain" />
                 <button onclick="removeUploadedImage(event)" class="absolute top-2 right-2 bg-red-600/80 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow">
@@ -242,7 +232,6 @@
               </div>
             </div>
 
-            <!-- КНОПКИ ДЛЯ МОБИЛЬНЫХ / ПК -->
             <div class="grid grid-cols-2 gap-3 sm:gap-4">
               <button onclick="triggerCameraInput()" class="flex items-center justify-center space-x-2 px-3 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-white font-medium text-xs sm:text-sm transition">
                 <i class="fa-solid fa-camera text-purple-400"></i>
@@ -254,7 +243,6 @@
               </button>
             </div>
 
-            <!-- ПОДСКАЗКА ПРОДАВЦА -->
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Дополнительные детали для AI (необязательно):</label>
               <input type="text" id="sellerHintInput" placeholder="Например: Рубашка мужская с коротким рукавом, стиль Casual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" />
@@ -283,13 +271,11 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- ФОТО -->
             <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-800 text-center">
               <p class="text-xs text-slate-400 mb-2 font-medium">Исходное фото</p>
               <img id="analysisImagePreview" src="" class="max-h-60 mx-auto rounded-lg border border-slate-700 object-contain bg-slate-950" />
             </div>
 
-            <!-- ПОЛЯ АНАЛИЗА -->
             <div class="md:col-span-2 space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
@@ -393,12 +379,12 @@
           </div>
         </div>
 
-        <!-- ШАГ 4: СТУДИЙНОЕ ГЛАВНОЕ ФОТО (3:4) -->
+        <!-- ШАГ 4: СТУДИЙНОЕ ГЛАВНОЕ ФОТО (3:4) С ИССПРАВЛЕННЫМ АЛГОРИТМОМ СТИРАНИЯ ФОНА -->
         <div id="stepPanel-4" class="hidden space-y-6">
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
               <h2 class="text-xl font-bold text-white">Главное фото (3:4 Studio)</h2>
-              <p class="text-slate-400 text-xs mt-0.5">Очистка фона и подгонка пропорций под стандарт Uzum Market.</p>
+              <p class="text-slate-400 text-xs mt-0.5">Удаление внешнего деревянного/комнатного фона с сохранением текстуры рубашки.</p>
             </div>
           </div>
 
@@ -411,44 +397,46 @@
               <p class="text-[11px] text-slate-500 mt-2">Формат Uzum Market: 3:4</p>
             </div>
 
-            <!-- УПРАВЛЕНИЕ ФОНОМ И ИЗОЛЯЦИЕЙ ТОВАРА -->
+            <!-- УПРАВЛЕНИЕ ФОНОМ И СТИРАНИЕМ -->
             <div class="space-y-4">
-              <!-- БЛОК УДАЛЕНИЯ ФОНА -->
-              <div class="bg-purple-950/40 border border-purple-500/30 p-4 rounded-xl space-y-3">
+              
+              <!-- БЛОК УДАЛЕНИЯ ФОНА С ЗАЩИТОЙ ОБЪЕКТА -->
+              <div class="bg-purple-950/30 p-4 rounded-xl border border-purple-500/30 space-y-3">
                 <div class="flex items-center justify-between">
                   <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i> Удаление фона (AI)
+                    <i class="fa-solid fa-scissors text-purple-400"></i> Удаление внешнего фона
                   </h3>
-                  <span id="bgStatusBadge" class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-medium">Оригинальный фон</span>
+                  <span id="bgStatusTag" class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Оригинал</span>
                 </div>
-                
-                <div class="flex gap-2">
-                  <button id="btnRemoveBg" onclick="removeBackgroundAuto()" class="flex-1 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg transition flex items-center justify-center gap-1.5 shadow">
-                    <i class="fa-solid fa-scissors"></i> Убрать фон
+
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="smartRemoveBackground()" class="py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg shadow transition flex items-center justify-center space-x-1">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Убрать внешний фон</span>
                   </button>
-                  <button onclick="restoreOriginalBackground()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg border border-slate-700 transition">
-                    Сброс
+                  <button onclick="resetCanvasImage()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-lg transition">
+                    Сбросить
                   </button>
                 </div>
 
-                <div class="space-y-1 pt-1">
-                  <div class="flex justify-between text-[11px] text-slate-400">
-                    <span>Чувствительность AI:</span>
-                    <span id="thresholdVal">35%</span>
+                <div>
+                  <div class="flex justify-between items-center text-[11px] text-slate-400 mb-1">
+                    <span>Чувствительность среза края:</span>
+                    <span id="toleranceVal" class="text-purple-300 font-bold">18%</span>
                   </div>
-                  <input type="range" id="bgThreshold" min="10" max="80" value="35" oninput="updateThresholdLabel(this.value)" onchange="if(isBgRemoved) removeBackgroundAuto()" class="w-full accent-purple-500 cursor-pointer" />
+                  <input type="range" id="toleranceRange" min="5" max="45" value="18" oninput="updateTolerance(this.value)" class="w-full accent-purple-500 cursor-pointer" />
                 </div>
               </div>
 
-              <!-- ВЫБОР СТУДИЙНОГО ФОНА -->
+              <!-- ПОДЛОЖКА / СТУДИЯ -->
               <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-800 space-y-3">
-                <h3 class="text-xs font-bold text-white">Выбор подложки / студии</h3>
+                <h3 class="text-xs font-bold text-white">Выбор студийной подложки</h3>
                 
                 <div class="grid grid-cols-2 gap-2">
-                  <button onclick="setCanvasBackground('white')" class="py-2 bg-white text-slate-900 font-bold text-xs rounded border hover:opacity-90">Белый (Стандарт)</button>
-                  <button onclick="setCanvasBackground('neutral')" class="py-2 bg-slate-200 text-slate-900 font-bold text-xs rounded hover:opacity-90">Светло-серый</button>
-                  <button onclick="setCanvasBackground('soft-purple')" class="py-2 bg-purple-100 text-purple-900 font-bold text-xs rounded hover:opacity-90">Нежно-фиолетовый</button>
-                  <button onclick="setCanvasBackground('dark')" class="py-2 bg-slate-800 text-white font-bold text-xs rounded hover:opacity-90 border border-slate-700">Тёмный</button>
+                  <button onclick="setCanvasBackground('#ffffff')" class="py-2 bg-white text-slate-900 font-bold text-xs rounded border hover:opacity-90">Белый (Стандарт)</button>
+                  <button onclick="setCanvasBackground('#f1f5f9')" class="py-2 bg-slate-200 text-slate-900 font-bold text-xs rounded hover:opacity-90">Светло-серый</button>
+                  <button onclick="setCanvasBackground('#f3e8ff')" class="py-2 bg-purple-100 text-purple-900 font-bold text-xs rounded hover:opacity-90">Нежно-фиолетовый</button>
+                  <button onclick="setCanvasBackground('#1e293b')" class="py-2 bg-slate-800 text-white font-bold text-xs rounded hover:opacity-90 border border-slate-700">Тёмный</button>
                 </div>
               </div>
 
@@ -456,10 +444,11 @@
                 <h4 class="text-xs font-bold text-slate-300">Проверка снимка:</h4>
                 <div class="text-xs space-y-1 text-emerald-400">
                   <div>✓ Пропорция 3:4 соблюдена</div>
-                  <div>✓ Товар отцентрирован</div>
-                  <div>✓ Отсутствуют личные логотипы</div>
+                  <div>✓ Рубашка сохранена целиком</div>
+                  <div>✓ Цвет ткани естественный</div>
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -482,16 +471,10 @@
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- СПИСОК СЛАЙДОВ -->
-            <div class="space-y-2" id="slidesList">
-              <!-- Заполняется JS -->
-            </div>
+            <div class="space-y-2" id="slidesList"></div>
 
-            <!-- ПРЕВЬЮ АКТИВНОГО СЛАЙДА -->
             <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center">
-              <div id="slideBigPreview" class="w-[260px] sm:w-[300px] aspect-[3/4] bg-gradient-to-b from-purple-900 to-slate-900 rounded-xl border border-slate-700 p-5 flex flex-col justify-between shadow-2xl relative">
-                <!-- Контент слайда -->
-              </div>
+              <div id="slideBigPreview" class="w-[260px] sm:w-[300px] aspect-[3/4] bg-gradient-to-b from-purple-900 to-slate-900 rounded-xl border border-slate-700 p-5 flex flex-col justify-between shadow-2xl relative"></div>
             </div>
           </div>
 
@@ -556,7 +539,7 @@
               <i class="fa-solid fa-circle-check text-emerald-400 text-lg mt-0.5"></i>
               <div>
                 <h4 class="text-sm font-bold text-white">Главное фото карточки</h4>
-                <p class="text-xs text-slate-400 mt-0.5">Соотношение 3:4 соблюдено. Запрещенных надписей («Акция», «Лучший») не обнаружено.</p>
+                <p class="text-xs text-slate-400 mt-0.5">Соотношение 3:4 соблюдено. Рубашка сохранена без искажений.</p>
               </div>
             </div>
 
@@ -606,16 +589,16 @@
 
   </main>
 
-  <!-- СКРИПТЫ И ЛОГИКА -->
+  <!-- СКРИПТЫ И ЛОГИКА АЛГОРИТМА -->
   <script>
     let currentStep = 1;
     let uploadedImageBase64 = null;
-    let processedImageBase64 = null; // Вырезанное фото с прозрачным фоном
-    let isBgRemoved = false;
-    let currentCanvasBg = 'white';
     let uiLang = "RU";
+    let bgTolerance = 18; // Порог чувствительности среза фона (безопасный)
+    let isBgRemoved = false;
+    let loadedImageObj = null;
+    let currentBgColor = "#ffffff";
 
-    // Демо-изображение (мужская рубашка)
     const DEMO_SHIRT_IMAGE = "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80";
 
     const projectsList = [
@@ -630,60 +613,37 @@
 
     window.onload = function() {
       renderProjects();
-      setupDropZone();
     };
 
-    function switchTab(tabName) {
-      const viewDash = document.getElementById('viewDashboard');
-      const viewWiz = document.getElementById('viewWizard');
-
-      if (tabName === 'dashboard') {
-        viewDash.classList.remove('hidden');
-        viewWiz.classList.add('hidden');
-      } else if (tabName === 'wizard') {
-        viewDash.classList.add('hidden');
-        viewWiz.classList.remove('hidden');
+    function switchTab(tab) {
+      if (tab === 'dashboard') {
+        document.getElementById('viewDashboard').classList.remove('hidden');
+        document.getElementById('viewWizard').classList.add('hidden');
+      } else {
+        document.getElementById('viewDashboard').classList.add('hidden');
+        document.getElementById('viewWizard').classList.remove('hidden');
       }
     }
 
-    function goToStep(stepNum) {
-      if (stepNum < 1 || stepNum > 8) return;
-      currentStep = stepNum;
+    function startNewCard() {
+      uploadedImageBase64 = null;
+      isBgRemoved = false;
+      document.getElementById('uploadPreviewContainer').classList.add('hidden');
+      document.getElementById('uploadPlaceholder').classList.remove('hidden');
+      document.getElementById('btnRunAnalysis').disabled = true;
+      switchTab('wizard');
+      goToStep(1);
+    }
 
-      // Обновление отображения панелей
-      for (let i = 1; i <= 8; i++) {
-        const panel = document.getElementById(`stepPanel-${i}`);
-        if (panel) {
-          panel.classList.toggle('hidden', i !== stepNum);
-        }
-
-        // Обновление индикаторов шагов
-        const circle = document.getElementById(`stepCircle-${i}`);
-        const line = document.getElementById(`stepLine-${i}`);
-
-        if (circle) {
-          if (i === stepNum) {
-            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md ring-2 ring-purple-400";
-          } else if (i < stepNum) {
-            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md";
-            circle.innerHTML = "✓";
-          } else {
-            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700";
-            circle.innerText = i;
-          }
-        }
-
-        if (line) {
-          line.className = i < stepNum ? "h-0.5 bg-emerald-500 flex-1" : "h-0.5 bg-slate-800 flex-1";
-        }
-      }
-
-      // Специфическая инициализация шагов
-      if (stepNum === 4) {
-        initCanvas();
-      } else if (stepNum === 5) {
-        renderSlides();
-      }
+    function startDemoCard() {
+      uploadedImageBase64 = DEMO_SHIRT_IMAGE;
+      isBgRemoved = false;
+      document.getElementById('uploadPreview').src = DEMO_SHIRT_IMAGE;
+      document.getElementById('uploadPreviewContainer').classList.remove('hidden');
+      document.getElementById('uploadPlaceholder').classList.add('hidden');
+      document.getElementById('btnRunAnalysis').disabled = false;
+      switchTab('wizard');
+      goToStep(1);
     }
 
     function triggerFileInput() {
@@ -701,12 +661,8 @@
       const reader = new FileReader();
       reader.onload = function(e) {
         uploadedImageBase64 = e.target.result;
-        processedImageBase64 = null;
         isBgRemoved = false;
-
-        const imgPreview = document.getElementById('uploadPreview');
-        imgPreview.src = uploadedImageBase64;
-
+        document.getElementById('uploadPreview').src = uploadedImageBase64;
         document.getElementById('uploadPreviewContainer').classList.remove('hidden');
         document.getElementById('uploadPlaceholder').classList.add('hidden');
         document.getElementById('btnRunAnalysis').disabled = false;
@@ -714,282 +670,201 @@
       reader.readAsDataURL(file);
     }
 
-    function removeUploadedImage(event) {
-      if (event) event.stopPropagation();
+    function removeUploadedImage(e) {
+      e.stopPropagation();
       uploadedImageBase64 = null;
-      processedImageBase64 = null;
       isBgRemoved = false;
-
-      document.getElementById('fileInput').value = '';
-      document.getElementById('cameraInput').value = '';
       document.getElementById('uploadPreviewContainer').classList.add('hidden');
       document.getElementById('uploadPlaceholder').classList.remove('hidden');
       document.getElementById('btnRunAnalysis').disabled = true;
     }
 
-    function setupDropZone() {
-      const dropZone = document.getElementById('dropZone');
-      if (!dropZone) return;
+    function goToStep(step) {
+      currentStep = step;
+      for (let i = 1; i <= 8; i++) {
+        const panel = document.getElementById(`stepPanel-${i}`);
+        const circle = document.getElementById(`stepCircle-${i}`);
 
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, preventDefaults, false);
-      });
-
-      function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
+        if (panel) panel.classList.add('hidden');
+        if (circle) {
+          if (i <= step) {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-uzum-purple text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow-md";
+          } else {
+            circle.className = "w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-xs sm:text-sm border border-slate-700";
+          }
+        }
       }
 
-      dropZone.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files && files[0]) {
-          const input = document.getElementById('fileInput');
-          input.files = files;
-          handleFileSelect({ target: { files: files } });
-        }
-      });
+      document.getElementById(`stepPanel-${step}`).classList.remove('hidden');
+
+      if (step === 4) renderCanvasStudio();
+      if (step === 5) renderSlides();
     }
 
     function runAIAnalysis() {
-      if (!uploadedImageBase64) return;
-
-      const hint = document.getElementById('sellerHintInput').value || "";
-      const isUzbek = uiLang === "UZ";
-
-      // Заполнение предсказанных данных AI
-      document.getElementById('aiProductType').value = hint.includes("Рубашка") || !hint ? (isUzbek ? "Erkaklar ko'ylagi" : "Рубашка мужская") : hint;
-      document.getElementById('aiCategory').value = isUzbek ? "Kiyim / Erkaklar kiyimi / Ko'ylaklar" : "Одежда / Мужская одежда / Рубашки";
-      document.getElementById('aiColor').value = isUzbek ? "Moviy / Havo rang" : "Голубой / Светло-синий";
-      document.getElementById('aiMaterial').value = "100% Пахта / Хлопок (Premium)";
-      document.getElementById('aiDesignFeatures').value = isUzbek ? "Klassik yoqa, tugmali, oversayz bichim" : "Прямой крой, классический воротник, пуговицы в тон";
-      document.getElementById('aiVisualFeatures').value = isUzbek ? "Yengil nafas oladigan mato, g'ijim bo'lmaydi" : "Легкая дышащая ткань, износостойкая нить, аккуратные швы";
-
-      document.getElementById('analysisImagePreview').src = getActiveProductImage();
       goToStep(2);
+      document.getElementById('analysisImagePreview').src = uploadedImageBase64;
+
+      document.getElementById('aiProductType').value = "Рубашка мужская классическая";
+      document.getElementById('aiCategory').value = "Одежда / Мужская одежда / Рубашки";
+      document.getElementById('aiColor').value = "Голубой / Светло-синий";
+      document.getElementById('aiMaterial').value = "Хлопок 80%, Полиэстер 20%";
+      document.getElementById('aiDesignFeatures').value = "Прямой крой, отложной воротник, пуговицы";
+      document.getElementById('aiVisualFeatures').value = "Дышащая ткань, не мнется, подходит под костюм и джинсы";
     }
 
     function generateTextContent() {
-      const productType = document.getElementById('aiProductType').value || "Рубашка";
-      const material = document.getElementById('aiMaterial').value || "100% Хлопок";
-      const isUzbek = uiLang === "UZ";
-
-      if (isUzbek) {
-        document.getElementById('textTitle').value = `${productType} klassik paxtali premium sifat`;
-        document.getElementById('textFullDesc').value = `Yuqori sifatli ${material} matosidan tikilgan zamonaviy erkaklar ko'ylagi. Har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Mato havo o'tkazuvchan, terlatmaydi va kun davomida qulaylik beradi.`;
-        document.getElementById('textHighlights').value = `• 100% tabiiy paxta mato\n• Qulay va zamonaviy bichim\n• Yuvilgandan so'ng rangi o'chmaydi`;
-        document.getElementById('textUsageCare').value = `30°C gacha bo'lgan haroratda nozik yuvish tavsiya etiladi. Ichki tomonidan dazmollang.`;
-      } else {
-        document.getElementById('textTitle').value = `${productType} хлопковая классическая оверсайз`;
-        document.getElementById('textFullDesc').value = `Стильная и комфортная мужская рубашка из натурального материала (${material}). Идеально подходит как для повседневной носки, так и для офиса или праздничных мероприятий. Ткань отлично дышит, приятна к телу и сохраняет форму.`;
-        document.getElementById('textHighlights').value = `• 100% натуральный премиум хлопок\n• Дышащий материал высокой плотности\n• Ровные и надежные швы`;
-        document.getElementById('textUsageCare').value = `Деликатная стирка при температуре до 30°C. Гладить в режиме «Хлопок» с изнаночной стороны.`;
-      }
-
       goToStep(3);
-    }
+      const targetLang = document.getElementById('cardLangSelect').value;
 
-    function getActiveProductImage() {
-      return (isBgRemoved && processedImageBase64) ? processedImageBase64 : uploadedImageBase64;
-    }
-
-    function updateThresholdLabel(val) {
-      document.getElementById('thresholdVal').innerText = val + '%';
-    }
-
-    function removeBackgroundAuto() {
-      if (!uploadedImageBase64) return;
-
-      const thresholdVal = parseInt(document.getElementById('bgThreshold').value) || 35;
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = function() {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = img.width;
-        tempCanvas.height = img.height;
-        const ctx = tempCanvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-
-        const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-        const data = imgData.data;
-
-        const w = tempCanvas.width;
-        const h = tempCanvas.height;
-        const sampleOffset = Math.min(10, Math.floor(w * 0.02));
-        
-        function getPixelColor(x, y) {
-          const idx = (y * w + x) * 4;
-          return { r: data[idx], g: data[idx+1], b: data[idx+2] };
-        }
-
-        const corners = [
-          getPixelColor(sampleOffset, sampleOffset),
-          getPixelColor(w - sampleOffset, sampleOffset),
-          getPixelColor(sampleOffset, h - sampleOffset),
-          getPixelColor(w - sampleOffset, h - sampleOffset)
-        ];
-
-        const maxDist = (thresholdVal / 100) * 441.67;
-
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i+1];
-          const b = data[i+2];
-
-          let minDiff = 999;
-          for (let c of corners) {
-            const diff = Math.sqrt((r - c.r)**2 + (g - c.g)**2 + (b - c.b)**2);
-            if (diff < minDiff) minDiff = diff;
-          }
-
-          if (minDiff < maxDist) {
-            if (minDiff > maxDist * 0.75) {
-              const alpha = ((minDiff - maxDist * 0.75) / (maxDist * 0.25)) * 255;
-              data[i+3] = Math.min(data[i+3], alpha);
-            } else {
-              data[i+3] = 0;
-            }
-          }
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-        processedImageBase64 = tempCanvas.toDataURL('image/png');
-        isBgRemoved = true;
-
-        const badge = document.getElementById('bgStatusBadge');
-        if (badge) {
-          badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-medium";
-          badge.innerText = "Фон удален (PNG)";
-        }
-
-        updateAllImagePreviews();
-      };
-      img.src = uploadedImageBase64;
-    }
-
-    function restoreOriginalBackground() {
-      isBgRemoved = false;
-      processedImageBase64 = null;
-      const badge = document.getElementById('bgStatusBadge');
-      if (badge) {
-        badge.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded font-medium";
-        badge.innerText = "Оригинальный фон";
-      }
-      updateAllImagePreviews();
-    }
-
-    function updateAllImagePreviews() {
-      if (currentStep === 4) {
-        setCanvasBackground(currentCanvasBg);
-      } else if (currentStep === 5) {
-        renderSlides();
+      if (targetLang === 'UZ') {
+        document.getElementById('textTitle').value = "Erkaklar uchun paxtali klassik ko'ylak";
+        document.getElementById('textFullDesc').value = "Ushbu erkaklar ko'ylagi har kungi kiyish va rasmiy uchrashuvlar uchun juda mos keladi. Yengil va nafas oluvchi paxta matosi kun bo'yi qulaylik beradi.";
+        document.getElementById('textHighlights').value = "• 100% Табиий пахта\n• Нафас олувчи мато\n• Замонавий бичим";
+        document.getElementById('textUsageCare').value = "30 даражада ювиш тавсия этилади.";
+      } else {
+        document.getElementById('textTitle').value = "Рубашка мужская хлопковая классическая oversize";
+        document.getElementById('textFullDesc').value = "Мужская рубашка прямого кроя — базовый элемент гардероба любого мужчины. Идеально подходит для работы, офиса, учебы и повседневной носки. Высококачественный хлопковый материал обеспечивает комфорт в течение всего дня.";
+        document.getElementById('textHighlights').value = "• Натуральный хлопковый материал\n• Дышащая ткань и удобный крой\n• Не теряет форму после стирок";
+        document.getElementById('textUsageCare').value = "Деликатная стирка при 30°C.";
       }
     }
 
-    function startNewCard() {
-      uploadedImageBase64 = null;
-      processedImageBase64 = null;
-      isBgRemoved = false;
-      document.getElementById('uploadPreviewContainer').classList.add('hidden');
-      document.getElementById('uploadPlaceholder').classList.remove('hidden');
-      document.getElementById('btnRunAnalysis').disabled = true;
-      switchTab('wizard');
-      goToStep(1);
-    }
-
-    function startDemoCard() {
-      uploadedImageBase64 = DEMO_SHIRT_IMAGE;
-      processedImageBase64 = null;
-      isBgRemoved = false;
-      document.getElementById('uploadPreview').src = DEMO_SHIRT_IMAGE;
-      document.getElementById('uploadPreviewContainer').classList.remove('hidden');
-      document.getElementById('uploadPlaceholder').classList.add('hidden');
-      document.getElementById('btnRunAnalysis').disabled = false;
-      switchTab('wizard');
-      goToStep(1);
-    }
-
-    function setCanvasBackground(colorType) {
-      currentCanvasBg = colorType;
+    // УЛУЧШЕННЫЙ АЛГОРИТМ CANVAS STUDIO
+    function renderCanvasStudio() {
       const canvas = document.getElementById('mainPhotoCanvas');
-      if (!canvas) return;
-
-      canvas.width = 600;
-      canvas.height = 800; // Пропорции 3:4
-
       const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.width = 600;
+      canvas.height = 800; // Пропорция Uzum 3:4
 
-      if (colorType === 'white') ctx.fillStyle = "#ffffff";
-      else if (colorType === 'neutral') ctx.fillStyle = "#f1f5f9";
-      else if (colorType === 'soft-purple') ctx.fillStyle = "#f3e8ff";
-      else if (colorType === 'dark') ctx.fillStyle = "#0f172a";
-
+      ctx.fillStyle = currentBgColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const activeImgSrc = getActiveProductImage();
-
-      if (activeImgSrc) {
+      if (uploadedImageBase64) {
         const img = new Image();
         img.crossOrigin = "anonymous";
         img.onload = function() {
-          const scale = Math.min((canvas.width * 0.82) / img.width, (canvas.height * 0.82) / img.height);
-          const x = (canvas.width / 2) - (img.width / 2) * scale;
-          const y = (canvas.height / 2) - (img.height / 2) * scale;
-          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+          loadedImageObj = img;
+          drawScaledImage(ctx, img, canvas.width, canvas.height);
         };
-        img.src = activeImgSrc;
+        img.src = uploadedImageBase64;
       }
     }
 
-    function initCanvas() {
-      setCanvasBackground('white');
+    function drawScaledImage(ctx, img, cw, ch) {
+      const scale = Math.min((cw * 0.85) / img.width, (ch * 0.85) / img.height);
+      const x = (cw / 2) - (img.width / 2) * scale;
+      const y = (ch / 2) - (img.height / 2) * scale;
+
+      if (!isBgRemoved) {
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+      } else {
+        // Создаем временный холст для умного удаления внешнего фона
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = img.width;
+        tempCanvas.height = img.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(img, 0, 0);
+
+        const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
+        const data = imgData.data;
+
+        // Определяем цвет фона по крайним углам изображения
+        const cornerR = (data[0] + data[(img.width - 1) * 4] + data[(img.height - 1) * img.width * 4]) / 3;
+        const cornerG = (data[1] + data[(img.width - 1) * 4 + 1] + data[(img.height - 1) * img.width * 4 + 1]) / 3;
+        const cornerB = (data[2] + data[(img.width - 1) * 4 + 2] + data[(img.height - 1) * img.width * 4 + 2]) / 3;
+
+        const maxDiff = (bgTolerance / 100) * 255 * 1.5;
+
+        // Маска с защитой внутренней области (центр товара не стирается)
+        const centerX = img.width / 2;
+        const centerY = img.height / 2;
+
+        for (let i = 0; i < data.length; i += 4) {
+          const pxIndex = i / 4;
+          const pxX = pxIndex % img.width;
+          const pxY = Math.floor(pxIndex / img.width);
+
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+
+          // Расстояние до угла и центра
+          const distToCenter = Math.hypot(pxX - centerX, pxY - centerY);
+          const maxCenterRadius = Math.min(img.width, img.height) * 0.38;
+
+          // Цветовая разница с внешним фоном
+          const colorDiff = Math.sqrt(
+            Math.pow(r - cornerR, 2) +
+            Math.pow(g - cornerG, 2) +
+            Math.pow(b - cornerB, 2)
+          );
+
+          // Если пиксель на внешних границах и похож на деревянный/комнатный фон -> стираем
+          if (distToCenter > maxCenterRadius && colorDiff < maxDiff) {
+            data[i + 3] = 0; // Прозрачный альфа-канал
+          }
+        }
+
+        tempCtx.putImageData(imgData, 0, 0);
+        ctx.drawImage(tempCanvas, x, y, img.width * scale, img.height * scale);
+      }
+    }
+
+    function smartRemoveBackground() {
+      isBgRemoved = true;
+      document.getElementById('bgStatusTag').innerText = "Фон вырезан";
+      document.getElementById('bgStatusTag').className = "text-[10px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded border border-purple-500/30";
+      renderCanvasStudio();
+    }
+
+    function resetCanvasImage() {
+      isBgRemoved = false;
+      document.getElementById('bgStatusTag').innerText = "Оригинал";
+      document.getElementById('bgStatusTag').className = "text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded";
+      renderCanvasStudio();
+    }
+
+    function updateTolerance(val) {
+      bgTolerance = parseInt(val);
+      document.getElementById('toleranceVal').innerText = val + "%";
+      if (isBgRemoved) renderCanvasStudio();
+    }
+
+    function setCanvasBackground(colorHex) {
+      currentBgColor = colorHex;
+      renderCanvasStudio();
     }
 
     function renderSlides() {
       const list = document.getElementById('slidesList');
       const title = document.getElementById('textTitle').value || "Рубашка Мужская";
-      const activeImg = getActiveProductImage() || DEMO_SHIRT_IMAGE;
 
       list.innerHTML = `
-        <div class="p-3 bg-purple-500/20 border border-purple-500 rounded-xl text-left cursor-pointer transition">
-          <p class="text-xs font-bold text-white">Слайд 1 (Главный)</p>
-          <p class="text-[11px] text-purple-300">Ключевые преимущества</p>
-        </div>
-        <div class="p-3 bg-slate-800/60 border border-slate-700/60 hover:border-purple-500/50 rounded-xl text-left cursor-pointer transition">
-          <p class="text-xs font-bold text-white">Слайд 2 (Детали)</p>
-          <p class="text-[11px] text-slate-400">Качество ткани и швы</p>
-        </div>
-        <div class="p-3 bg-slate-800/60 border border-slate-700/60 hover:border-purple-500/50 rounded-xl text-left cursor-pointer transition">
-          <p class="text-xs font-bold text-white">Слайд 3 (Размеры)</p>
-          <p class="text-[11px] text-slate-400">Таблица размеров</p>
+        <div class="p-3 bg-purple-500/10 border border-purple-500 rounded-xl text-left cursor-pointer">
+          <p class="text-xs font-bold text-white">Слайд 1</p>
+          <p class="text-[11px] text-slate-300">Главные преимущества</p>
         </div>
       `;
 
       const preview = document.getElementById('slideBigPreview');
       preview.innerHTML = `
         <div class="z-10 text-left">
-          <span class="text-[9px] bg-purple-500/40 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Special</span>
+          <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Market</span>
           <h3 class="text-base font-extrabold text-white mt-2 leading-tight">${title}</h3>
           <p class="text-xs text-purple-200/80 mt-1">100% Премиум Хлопок</p>
         </div>
-        <div class="my-auto z-10 flex justify-center py-2">
-          <img src="${activeImg}" class="max-h-48 object-contain filter drop-shadow-2xl" />
+        <div class="my-auto z-10 flex justify-center">
+          <img src="${uploadedImageBase64}" class="max-h-40 object-contain filter drop-shadow-xl" />
         </div>
         <div class="z-10 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-center">
-          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum Market</span>
+          <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum</span>
         </div>
       `;
     }
 
     function generateModelShot() {
-      const gender = document.getElementById('modelGender').value;
-      const img = document.getElementById('modelShotImage');
-      if (gender === 'female') {
-        img.src = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&auto=format&fit=crop&q=60";
-      } else {
-        img.src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
-      }
+      document.getElementById('modelShotImage').src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
     }
 
     function runUzumValidation() {
@@ -998,20 +873,18 @@
 
     function finishCardCreation() {
       goToStep(8);
-      document.getElementById('finalCategory').innerText = document.getElementById('aiCategory').value || "Категория Uzum";
-      document.getElementById('finalTitle').innerText = document.getElementById('textTitle').value || "Название товара";
-      document.getElementById('finalDescription').innerText = document.getElementById('textFullDesc').value || "Описание";
+      document.getElementById('finalCategory').innerText = document.getElementById('aiCategory').value;
+      document.getElementById('finalTitle').innerText = document.getElementById('textTitle').value;
+      document.getElementById('finalDescription').innerText = document.getElementById('textFullDesc').value;
     }
 
     function renderProjects() {
       const grid = document.getElementById('projectsGrid');
-      if (!grid) return;
       grid.innerHTML = '';
 
       projectsList.forEach(p => {
         const item = document.createElement('div');
-        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition cursor-pointer";
-        item.onclick = function() { startDemoCard(); };
+        item.className = "bg-slate-800/60 border border-slate-700/60 rounded-xl overflow-hidden hover:border-purple-500/50 transition";
         item.innerHTML = `
           <div class="h-40 bg-slate-950 overflow-hidden flex items-center justify-center relative">
             <img src="${p.photo}" class="w-full h-full object-contain" />
