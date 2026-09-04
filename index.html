@@ -488,26 +488,57 @@
           <div class="flex items-center justify-between border-b border-slate-800 pb-4">
             <div>
               <h2 class="text-xl font-bold text-white">Фото товара на модели</h2>
-              <p class="text-slate-400 text-xs mt-0.5">Демонстрация одежды и аксессуаров в реальном стиле.</p>
+              <p class="text-slate-400 text-xs mt-0.5">ИИ-генерация примерки товара на реальной модели в нужном стиле.</p>
             </div>
+            <span class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full font-medium">
+              <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> AI Model Engine
+            </span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="space-y-3 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
-              <label class="text-xs font-medium text-slate-300 block">Тип модели:</label>
-              <select id="modelGender" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                <option value="male">Парень / Мужчина</option>
-                <option value="female">Девушка / Женщина</option>
-              </select>
+            <div class="space-y-4 bg-slate-800/40 p-4 rounded-xl border border-slate-800">
+              <div>
+                <label class="text-xs font-medium text-slate-300 block mb-1">Пол модели:</label>
+                <select id="modelGender" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                  <option value="male">Парень / Мужчина</option>
+                  <option value="female">Девушка / Женщина</option>
+                </select>
+              </div>
 
-              <button onclick="generateModelShot()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg transition">
-                Сгенерировать примерку
+              <div>
+                <label class="text-xs font-medium text-slate-300 block mb-1">Стиль и локация:</label>
+                <select id="modelStyle" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-purple-500">
+                  <option value="classic">Классический / Офис</option>
+                  <option value="casual">Casual / Городской стиль</option>
+                  <option value="studio">Минималистичная студия</option>
+                </select>
+              </div>
+
+              <div class="p-3 bg-purple-950/30 border border-purple-500/20 rounded-lg text-[11px] text-purple-300">
+                <i class="fa-solid fa-circle-info mr-1"></i> Сохраняется цвет, крой и текстура вашей рубашки при примерке.
+              </div>
+
+              <button id="btnGenerateModel" onclick="generateModelShot()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-purple-600/30 transition flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Сгенерировать примерку</span>
               </button>
             </div>
 
-            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex items-center justify-center">
-              <div class="w-[260px] sm:w-[300px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center">
-                <img id="modelShotImage" src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60" class="w-full h-full object-cover" />
+            <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 flex items-center justify-center relative">
+              <div class="w-[260px] sm:w-[300px] aspect-[3/4] bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl flex items-center justify-center relative">
+                <!-- Лоадер при генерации -->
+                <div id="modelLoadingOverlay" class="absolute inset-0 bg-slate-950/80 backdrop-blur flex flex-col items-center justify-center z-20 hidden">
+                  <i class="fa-solid fa-circle-notch fa-spin text-purple-500 text-3xl mb-3"></i>
+                  <span class="text-xs text-white font-medium">Нейросеть генерирует фото...</span>
+                  <span class="text-[10px] text-purple-300 mt-1">Примерка рубашки на модель</span>
+                </div>
+
+                <img id="modelShotImage" src="https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=600&auto=format&fit=crop&q=80" alt="Рубашка на модели" class="w-full h-full object-cover transition duration-300" />
+                
+                <div class="absolute bottom-2 left-2 right-2 bg-slate-900/80 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/60 flex items-center justify-between text-[10px] text-slate-300">
+                  <span id="modelTagLabel">👨 Мужчина • Классика</span>
+                  <span class="text-emerald-400 font-bold">100% Match</span>
+                </div>
               </div>
             </div>
           </div>
@@ -596,18 +627,18 @@
 
     const DEMO_SHIRT_IMAGE = "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600&auto=format&fit=crop&q=80";
 
-    const projectsList = [
-      {
-        id: "proj-1",
-        title: "Рубашка мужская хлопковая классическая oversize",
-        category: "Одежда / Мужская одежда / Рубашки",
-        date: "2026-09-04",
-        photo: DEMO_SHIRT_IMAGE
+    // БИБЛИОТЕКА СГЕНЕРИРОВАННЫХ ИИ-ФОТО МОДЕЛЕЙ ДЛЯ РУБАШЕК
+    const MODEL_SHOTS = {
+      male: {
+        classic: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?w=600&auto=format&fit=crop&q=80",
+        casual: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=600&auto=format&fit=crop&q=80",
+        studio: "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=600&auto=format&fit=crop&q=80"
+      },
+      female: {
+        classic: "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=600&auto=format&fit=crop&q=80",
+        casual: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&auto=format&fit=crop&q=80",
+        studio: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80"
       }
-    ];
-
-    window.onload = function() {
-      renderProjects();
     };
 
     function switchTab(tab) {
@@ -694,6 +725,7 @@
 
       if (step === 4) renderCanvasStudio();
       if (step === 5) renderSlides();
+      if (step === 6) updateModelPreviewImage();
     }
 
     function runAIAnalysis() {
@@ -848,7 +880,36 @@
     }
 
     function generateModelShot() {
-      document.getElementById('modelShotImage').src = "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop&q=60";
+      const loader = document.getElementById('modelLoadingOverlay');
+      const btn = document.getElementById('btnGenerateModel');
+      
+      if (loader) loader.classList.remove('hidden');
+      if (btn) btn.disabled = true;
+
+      setTimeout(() => {
+        updateModelPreviewImage();
+        if (loader) loader.classList.add('hidden');
+        if (btn) btn.disabled = false;
+      }, 700);
+    }
+
+    function updateModelPreviewImage() {
+      const gender = document.getElementById('modelGender')?.value || 'male';
+      const style = document.getElementById('modelStyle')?.value || 'classic';
+      
+      const shotUrl = MODEL_SHOTS[gender]?.[style] || MODEL_SHOTS.male.classic;
+      const imgElem = document.getElementById('modelShotImage');
+      
+      if (imgElem) {
+        imgElem.src = shotUrl;
+      }
+
+      const genderText = gender === 'male' ? '👨 Мужчина' : '👩 Девушка';
+      const styleTextMap = { classic: 'Классика', casual: 'Casual', studio: 'Студия' };
+      const tagLabel = document.getElementById('modelTagLabel');
+      if (tagLabel) {
+        tagLabel.innerText = `${genderText} • ${styleTextMap[style] || 'Стиль'}`;
+      }
     }
 
     function runUzumValidation() {
