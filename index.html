@@ -922,7 +922,7 @@
         // 1. Отрисовываем модель-подложку
         ctx.drawImage(modelImg, 0, 0, modelCanvas.width, modelCanvas.height);
 
-        // 2. Накладываем ТОЧНО вырезанную синюю рубашку пользователя (а не чужой белый свитшот!)
+        // 2. Накладываем вырезанную рубашку пользователя
         const shirtSourceImg = new Image();
         shirtSourceImg.crossOrigin = "anonymous";
         shirtSourceImg.onload = function() {
@@ -937,12 +937,38 @@
           let posY = modelCanvas.height * 0.28 + shirtFitOffsetY;
           if (gender === 'female') posY = modelCanvas.height * 0.26 + shirtFitOffsetY;
 
-          // Легкая мягкая тень под рубашкой
-          ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-          ctx.shadowBlur = 15;
-          ctx.shadowOffsetY = 8;
+          // Создаем маску (clipping path) в форме торса, чтобы убрать "квадратные" края
+          ctx.beginPath();
+          ctx.moveTo(posX + baseWidth * 0.25, posY); // левая часть шеи
+          ctx.lineTo(posX + baseWidth * 0.75, posY); // правая часть шеи
+          ctx.quadraticCurveTo(posX + baseWidth, posY + baseHeight * 0.1, posX + baseWidth, posY + baseHeight * 0.25); // правое плечо
+          ctx.lineTo(posX + baseWidth * 0.9, posY + baseHeight * 0.9); // правый бок
+          ctx.quadraticCurveTo(posX + baseWidth * 0.5, posY + baseHeight * 1.05, posX + baseWidth * 0.1, posY + baseHeight * 0.9); // низ (скругленный)
+          ctx.lineTo(posX, posY + baseHeight * 0.25); // левый бок
+          ctx.quadraticCurveTo(posX, posY + baseHeight * 0.1, posX + baseWidth * 0.25, posY); // левое плечо
+          ctx.closePath();
+          ctx.clip(); // Применяем маску, теперь картинка примет форму тела!
 
+          // Если фон не был удален пользователем (есть квадратный фон), используем режим multiply для смешивания с текстурой одежды модели
+          if (!isBgRemoved && uploadedImageBase64) {
+             ctx.globalCompositeOperation = "multiply";
+          }
+
+          // Рисуем саму рубашку
           ctx.drawImage(shirtSourceImg, posX, posY, baseWidth, baseHeight);
+          
+          // Возвращаем обычный режим для отрисовки теней
+          ctx.globalCompositeOperation = "source-over";
+
+          // Добавляем градиентные тени по краям для создания объема (3D эффект цилиндра)
+          const gradient = ctx.createLinearGradient(posX, posY, posX + baseWidth, posY);
+          gradient.addColorStop(0, "rgba(0,0,0,0.5)");
+          gradient.addColorStop(0.15, "rgba(0,0,0,0.0)");
+          gradient.addColorStop(0.85, "rgba(0,0,0,0.0)");
+          gradient.addColorStop(1, "rgba(0,0,0,0.5)");
+          ctx.fillStyle = gradient;
+          ctx.fillRect(posX, posY, baseWidth, baseHeight);
+
           ctx.restore();
         };
 
@@ -1232,106 +1258,6 @@
     function setCanvasBackground(colorHex) {
       currentBgColor = colorHex;
       renderCanvasStudio();
-    }
-
-    function renderSlides() {
-      const list = document.getElementById('slidesList');
-      const title = document.getElementById('textTitle')?.value || "Рубашка Мужская";
-
-      if (list) {
-        list.innerHTML = `
-          <div class="p-3 bg-purple-500/10 border border-purple-500 rounded-xl text-left cursor-pointer">
-            <p class="text-xs font-bold text-white">Слайд 1</p>
-            <p class="text-[11px] text-slate-300">Главные преимущества</p>
-          </div>
-        `;
-      }
-
-      const preview = document.getElementById('slideBigPreview');
-      if (preview) {
-        preview.innerHTML = `
-          <div class="z-10 text-left">
-            <span class="text-[9px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2 py-0.5 rounded font-bold uppercase">Uzum Market</span>
-            <h3 class="text-base font-extrabold text-white mt-2 leading-tight">${title}</h3>
-            <p class="text-xs text-purple-200/80 mt-1">100% Премиум Хлопок</p>
-          </div>
-          <div class="my-auto z-10 flex justify-center">
-            <img src="${uploadedImageBase64 || DEMO_SHIRT_IMAGE}" class="max-h-40 object-contain filter drop-shadow-xl" />
-          </div>
-          <div class="z-10 bg-slate-900/80 backdrop-blur p-2 rounded-lg border border-slate-700 text-center">
-            <span class="text-[10px] text-emerald-400 font-bold">✓ Гарантия качества Uzum</span>
-          </div>
-        `;
-      }
-    }
-
-    function generateModelShot() {
-      const loader = document.getElementById('modelLoadingOverlay');
-      const btn = document.getElementById('btnGenerateModel');
-      
-      if (loader) loader.classList.remove('hidden');
-      if (btn) btn.disabled = true;
-
-      setTimeout(() => {
-        updateModelPreviewImage();
-        if (loader) loader.classList.add('hidden');
-        if (btn) btn.disabled = false;
-      }, 600);
-    }
-
-    function updateModelPreviewImage() {
-      const gender = document.getElementById('modelGender')?.value || 'male';
-      const style = document.getElementById('modelStyle')?.value || 'classic';
-      
-      const shotUrl = MODEL_SHOTS[gender]?.[style] || MODEL_SHOTS.male.classic;
-      
-      const modelCanvas = document.getElementById('modelCanvas');
-      if (!modelCanvas) return;
-      
-      const ctx = modelCanvas.getContext('2d');
-      modelCanvas.width = 600;
-      modelCanvas.height = 800;
-
-      const modelImg = new Image();
-      modelImg.crossOrigin = "anonymous";
-      modelImg.onload = function() {
-        ctx.drawImage(modelImg, 0, 0, modelCanvas.width, modelCanvas.height);
-
-        // Если есть вырезанная рубашка, аккуратно накладываем её поверх модели
-        if (processedShirtCanvas || uploadedImageBase64) {
-          const overlayImg = processedShirtCanvas ? processedShirtCanvas : new Image();
-          
-          const drawOverlay = (shirtElem) => {
-            ctx.save();
-            ctx.globalAlpha = 0.95;
-            
-            // Настройка расположения рубашки под торс модели
-            const overlayW = modelCanvas.width * 0.58;
-            const overlayH = modelCanvas.height * 0.48;
-            const overlayX = (modelCanvas.width - overlayW) / 2;
-            const overlayY = modelCanvas.height * 0.28;
-
-            ctx.drawImage(shirtElem, overlayX, overlayY, overlayW, overlayH);
-            ctx.restore();
-          };
-
-          if (processedShirtCanvas) {
-            drawOverlay(processedShirtCanvas);
-          } else {
-            overlayImg.crossOrigin = "anonymous";
-            overlayImg.onload = () => drawOverlay(overlayImg);
-            overlayImg.src = uploadedImageBase64 || DEMO_SHIRT_IMAGE;
-          }
-        }
-      };
-      modelImg.src = shotUrl;
-
-      const genderText = gender === 'male' ? '👨 Мужчина' : '👩 Девушка';
-      const styleTextMap = { classic: 'Деловой', casual: 'Casual', studio: 'Студия' };
-      const tagLabel = document.getElementById('modelTagLabel');
-      if (tagLabel) {
-        tagLabel.innerText = `${genderText} • ${styleTextMap[style] || 'Стиль'}`;
-      }
     }
 
     function runUzumValidation() {
