@@ -1392,16 +1392,132 @@ async function generateTextContent() {
       updateModelPreviewImage();
     }
 
-    function generateModelShot() {
-      const loader = document.getElementById('modelLoadingOverlay');
-      if (loader) loader.classList.remove('hidden');
-      
-      setTimeout(() => {
-        updateModelPreviewImage();
-        if (loader) loader.classList.add('hidden');
-        showToast('Фото на модели обновлено!');
-      }, 400);
+    async function generateModelShot() {
+    const loader = document.getElementById('modelLoadingOverlay');
+
+    if (loader) {
+        loader.classList.remove('hidden');
     }
+
+    showToast('Gemini создаёт фото на модели...');
+
+    try {
+        if (!uploadedImageBase64) {
+            throw new Error('Сначала загрузите фотографию товара');
+        }
+
+        const genderElement = document.getElementById('modelGender');
+        const styleElement = document.getElementById('modelStyle');
+
+        const gender = genderElement
+            ? genderElement.value
+            : 'male';
+
+        const style = styleElement
+            ? styleElement.value
+            : 'casual';
+
+        const productTypeElement =
+            document.getElementById('aiProductType');
+
+        const colorElement =
+            document.getElementById('aiColor');
+
+        const materialElement =
+            document.getElementById('aiMaterial');
+
+        const response = await fetch(
+            'http://localhost:3000/api/generate-model',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    imageBase64: uploadedImageBase64,
+                    gender: gender,
+                    style: style,
+                    productType: productTypeElement
+                        ? productTypeElement.value
+                        : 'одежда',
+                    color: colorElement
+                        ? colorElement.value
+                        : '',
+                    material: materialElement
+                        ? materialElement.value
+                        : ''
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error ||
+                'Ошибка генерации фото на модели'
+            );
+        }
+
+        if (!result.imageBase64) {
+            throw new Error(
+                'Gemini не вернул изображение'
+            );
+        }
+
+        // Показываем настоящее AI-изображение
+        const canvas = document.getElementById('modelCanvas');
+
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+
+            const img = new Image();
+
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx.clearRect(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                ctx.drawImage(
+                    img,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+            };
+
+            img.src = result.imageBase64;
+        }
+
+        showToast(
+            'Фото на модели успешно создано!'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Model generation error:',
+            error
+        );
+
+        showToast(
+            'Ошибка: ' + error.message
+        );
+
+    } finally {
+
+        if (loader) {
+            loader.classList.add('hidden');
+        }
+    }
+}
 
     function updateModelPreviewImage() {
       const canvas = document.getElementById('modelCanvas');
