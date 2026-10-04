@@ -1078,84 +1078,141 @@ try {
 }
 
     async function triggerStep2To3() {
-    const success = await generateTextContent();
-
-    if (success) {
-        goToStep(3);
+    await generateTextContent();
+    goToStep(3);
     }
-}
 
-async function generateTextContent() {
+    async function generateTextContent() {
 
-    const targetLangElement = document.getElementById('cardLangSelect');
-    const targetLang = targetLangElement ? targetLangElement.value : 'RU';
+const targetLangElement =
+    document.getElementById('cardLangSelect');
 
-    const productType = document.getElementById('aiProductType').value;
-    const category = document.getElementById('aiCategory').value;
-    const color = document.getElementById('aiColor').value;
-    const material = document.getElementById('aiMaterial').value;
-    const designFeatures = document.getElementById('aiDesignFeatures').value;
-    const visualFeatures = document.getElementById('aiVisualFeatures').value;
+const targetLang =
+    targetLangElement ? targetLangElement.value : 'RU';
 
-    showToast('Gemini генерирует описание товара...');
+const productType =
+    document.getElementById('aiProductType').value;
 
-    try {
+const category =
+    document.getElementById('aiCategory').value;
 
-        const response = await fetch(
-            'http://localhost:3000/api/generate-description',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    productType: productType,
-                    category: category,
-                    color: color,
-                    material: material,
-                    designFeatures: designFeatures,
-                    visualFeatures: visualFeatures,
-                    language: targetLang
-                })
-            }
-        );
+const color =
+    document.getElementById('aiColor').value;
 
-        const result = await response.json();
+const material =
+    document.getElementById('aiMaterial').value;
 
-        if (!response.ok) {
-            throw new Error(
-                result.error || 'Ошибка генерации описания'
-            );
+const designFeatures =
+    document.getElementById('aiDesignFeatures').value;
+
+const visualFeatures =
+    document.getElementById('aiVisualFeatures').value;
+
+showToast('Gemini генерирует описание товара...');
+
+try {
+
+    const response = await fetch(
+        'http://localhost:3000/api/generate-description',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                productType: productType,
+                category: category,
+                color: color,
+                material: material,
+                designFeatures: designFeatures,
+                visualFeatures: visualFeatures,
+                language: targetLang
+            })
         }
+    );
 
-        document.getElementById('textTitle').value =
-            result.title || '';
+    const result = await response.json();
 
-        document.getElementById('textFullDesc').value =
-            result.description || '';
+    if (!response.ok) {
 
-        document.getElementById('textHighlights').value =
-            Array.isArray(result.highlights)
-                ? result.highlights.map(x => '• ' + x).join('\n')
-                : (result.highlights || '');
-
-        document.getElementById('textUsageCare').value =
-            result.usage || '';
-
-        showToast('Описание успешно создано Gemini');
-
-        return true;
-
-    } catch (error) {
-
-        console.error('Description error:', error);
-
-        showToast(
-            'Ошибка генерации описания: ' + error.message
+        console.error(
+            'Description API error:',
+            result
         );
 
-        return false;
+        throw new Error(
+            result.error ||
+            'Ошибка генерации описания'
+        );
     }
+
+    console.log(
+        'GEMINI DESCRIPTION:',
+        result
+    );
+
+    /*
+     * SEO-название
+     */
+
+    document.getElementById(
+        'textTitle'
+    ).value = result.title || '';
+
+    /*
+     * Полное описание
+     */
+
+    document.getElementById(
+        'textFullDesc'
+    ).value = result.description || '';
+
+    /*
+     * Преимущества товара
+     */
+
+    if (Array.isArray(result.highlights)) {
+
+        document.getElementById(
+            'textHighlights'
+        ).value = result.highlights
+            .map(function(item) {
+                return '• ' + item;
+            })
+            .join('\n');
+    } else {
+
+        document.getElementById(
+            'textHighlights'
+        ).value = result.highlights || '';
+    }
+
+    /*
+     * Использование и уход
+     */
+
+    document.getElementById(
+        'textUsageCare'
+    ).value = result.usage || '';
+
+    showToast(
+        'Описание успешно создано Gemini!'
+    );
+
+} catch (error) {
+
+    console.error(
+        'Description generation error:',
+        error
+    );
+
+    showToast(
+        'Ошибка генерации: ' +
+        error.message
+    );
+}
 }
 
     function renderCanvasStudio() {
@@ -1273,15 +1330,135 @@ async function generateTextContent() {
       }
     }
 
-    function smartRemoveBackground() {
-      isBgRemoved = true;
-      const tag = document.getElementById('bgStatusTag');
-      if (tag) {
-        tag.innerText = "Фон вырезан";
-        tag.className = "text-[10px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded border border-purple-500/30";
-      }
-      renderCanvasStudio();
+    async function smartRemoveBackground() {
+
+if (!uploadedImageBase64) {
+    showToast('Сначала загрузите фотографию товара');
+    return;
+}
+
+const tag = document.getElementById('bgStatusTag');
+
+if (tag) {
+    tag.innerText = 'Удаляем фон...';
+    tag.className =
+        'text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full';
+}
+
+showToast('remove.bg удаляет фон...');
+
+try {
+
+    const response = await fetch(
+        'http://localhost:3000/api/remove-background',
+        {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                imageBase64: uploadedImageBase64
+            })
+        }
+    );
+
+
+    const result = await response.json();
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            result.error ||
+            'Ошибка удаления фона'
+        );
+
     }
+
+
+    if (!result.imageBase64) {
+
+        throw new Error(
+            'remove.bg не вернул изображение'
+        );
+
+    }
+
+
+    // Сохраняем изображение с удалённым фоном
+    uploadedImageBase64 =
+        result.imageBase64;
+
+
+    isBgRemoved = true;
+
+
+    // Сбрасываем старый canvas
+    processedShirtCanvas = null;
+
+
+    // Обновляем изображение предпросмотра
+    const preview =
+        document.getElementById('uploadPreview');
+
+    if (preview) {
+        preview.src =
+            result.imageBase64;
+    }
+
+
+    // Обновляем статус
+    if (tag) {
+
+        tag.innerText =
+            'Фон удалён';
+
+        tag.className =
+            'text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded-full';
+
+    }
+
+
+    // Перерисовываем рабочую область
+    if (typeof renderCanvasStudio === 'function') {
+        renderCanvasStudio();
+    }
+
+
+    showToast(
+        'Фон успешно удалён!'
+    );
+
+
+} catch (error) {
+
+    console.error(
+        'Remove background error:',
+        error
+    );
+
+
+    if (tag) {
+
+        tag.innerText =
+            'Ошибка';
+
+        tag.className =
+            'text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded-full';
+
+    }
+
+
+    showToast(
+        'Ошибка удаления фона: ' +
+        error.message
+    );
+
+}
+
+}
 
     function resetCanvasImage() {
       isBgRemoved = false;
@@ -1392,132 +1569,16 @@ async function generateTextContent() {
       updateModelPreviewImage();
     }
 
-    async function generateModelShot() {
-    const loader = document.getElementById('modelLoadingOverlay');
-
-    if (loader) {
-        loader.classList.remove('hidden');
+    function generateModelShot() {
+      const loader = document.getElementById('modelLoadingOverlay');
+      if (loader) loader.classList.remove('hidden');
+      
+      setTimeout(() => {
+        updateModelPreviewImage();
+        if (loader) loader.classList.add('hidden');
+        showToast('Фото на модели обновлено!');
+      }, 400);
     }
-
-    showToast('Gemini создаёт фото на модели...');
-
-    try {
-        if (!uploadedImageBase64) {
-            throw new Error('Сначала загрузите фотографию товара');
-        }
-
-        const genderElement = document.getElementById('modelGender');
-        const styleElement = document.getElementById('modelStyle');
-
-        const gender = genderElement
-            ? genderElement.value
-            : 'male';
-
-        const style = styleElement
-            ? styleElement.value
-            : 'casual';
-
-        const productTypeElement =
-            document.getElementById('aiProductType');
-
-        const colorElement =
-            document.getElementById('aiColor');
-
-        const materialElement =
-            document.getElementById('aiMaterial');
-
-        const response = await fetch(
-            'http://localhost:3000/api/generate-model',
-            {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    imageBase64: uploadedImageBase64,
-                    gender: gender,
-                    style: style,
-                    productType: productTypeElement
-                        ? productTypeElement.value
-                        : 'одежда',
-                    color: colorElement
-                        ? colorElement.value
-                        : '',
-                    material: materialElement
-                        ? materialElement.value
-                        : ''
-                })
-            }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                result.error ||
-                'Ошибка генерации фото на модели'
-            );
-        }
-
-        if (!result.imageBase64) {
-            throw new Error(
-                'Gemini не вернул изображение'
-            );
-        }
-
-        // Показываем настоящее AI-изображение
-        const canvas = document.getElementById('modelCanvas');
-
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-
-            const img = new Image();
-
-            img.onload = function() {
-                canvas.width = img.width;
-                canvas.height = img.height;
-
-                ctx.clearRect(
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
-
-                ctx.drawImage(
-                    img,
-                    0,
-                    0,
-                    canvas.width,
-                    canvas.height
-                );
-            };
-
-            img.src = result.imageBase64;
-        }
-
-        showToast(
-            'Фото на модели успешно создано!'
-        );
-
-    } catch (error) {
-
-        console.error(
-            'Model generation error:',
-            error
-        );
-
-        showToast(
-            'Ошибка: ' + error.message
-        );
-
-    } finally {
-
-        if (loader) {
-            loader.classList.add('hidden');
-        }
-    }
-}
 
     function updateModelPreviewImage() {
       const canvas = document.getElementById('modelCanvas');
